@@ -7,7 +7,8 @@ import SurveyModel from '../../models/survey';
  */
 export default class SurveyService extends Service {
     constructor(dao) {
-        super();
+      super();
+      this.model = new SurveyModel();
     }
 
     /**
@@ -20,7 +21,7 @@ export default class SurveyService extends Service {
     getAll(req, res) {
         
         return (
-            SurveyModel.getAll()
+          this.model.getAll()
                 .then(data => {
                     res.json({data});
                 })
@@ -45,7 +46,7 @@ export default class SurveyService extends Service {
         
         
         return (
-            SurveyModel.create(req.body)
+          this.model.create(req.body)
                 .then(() => {
                     res.status(200).send("Survey created");
                 })
@@ -70,7 +71,7 @@ export default class SurveyService extends Service {
 
 
         return (
-            SurveyModel.update(req.body)
+          this.model.update(req.body)
                 .then(() => {
                     res.status(200).send("Survey updated");
                 })
@@ -95,7 +96,7 @@ export default class SurveyService extends Service {
         
         
         return (
-            SurveyModel.remove(req.body.id)
+          this.model.remove(req.body.id)
                 .then(() => {
                     res.status(200).send("Survey deleted");
                 })

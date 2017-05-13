@@ -2,11 +2,10 @@ import mongoose from 'mongoose';
 
 import Model from '../model';
 
-const Schema = mongoose.Schema;
-const ObjectIdSchema = Schema.ObjectId;
+const ObjectIdSchema = mongoose.Schema.ObjectId;
 const ObjectId = mongoose.Types.ObjectId;
 
-const QuestionSchema = new Schema({
+const QuestionSchema = new mongoose.Schema({
     id: { type: String, default: '' },
     survey: { type : String },
     question: { type : String, default : ''},
@@ -17,34 +16,41 @@ const QuestionSchema = new Schema({
     }
 });
 
+QuestionSchema.set('toJSON', {
+  transform: function (doc, ret) {
+    delete ret._id;
+    delete ret.__v;
+  },
+});
+
+const Question = mongoose.model('Question', QuestionSchema);
+
 /**
  * Service level class with methods for questions.
  */
-export default class QuestionModel extends Model {
+export default class QuestionModel {
     constructor() {
-        super();
+        this.model = new Model(Question);
     }
     
-    static getAll() {
-        return super.select({});
+    getAll() {
+        return this.model.select({});
     }
     
-    static create(question) {
-        return super.create(question);
+    create(question) {
+        return this.model.create(question);
     }
     
-    static update(question) {
+    update(question) {
         const criteria = {id: survey.id};
         delete question.id;
         
         const update = question;
-        return super.update(criteria, update);
+        return this.model.update(criteria, update);
     }
     
-    static remove(id) {
+    remove(id) {
         const criteria = {id};
-        return super.remove(criteria);
+        return this.model.remove(criteria);
     }
 }
-
-mongoose.model('Question', QuestionSchema);

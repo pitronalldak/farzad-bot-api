@@ -1,12 +1,12 @@
 import Service from '../service';
 import QuestionModel from '../../models/question';
-
 /**
  * Service level class with methods for questions.
  */
 export default class QuestionService extends Service {
-    constructor(dao) {
+    constructor() {
         super();
+        this.model = new QuestionModel();
     }
 
     /**
@@ -19,7 +19,7 @@ export default class QuestionService extends Service {
     getAll(req, res) {
         
         return (
-            QuestionModel.getAll()
+          this.model.getAll()
                 .then(data => {
                     res.json({data});
                 })
@@ -44,7 +44,7 @@ export default class QuestionService extends Service {
         
         
         return (
-            QuestionModel.create(req.body)
+          this.model.create(req.body)
                 .then(() => {
                     res.status(200).send("Question created");
                 })
@@ -69,7 +69,7 @@ export default class QuestionService extends Service {
 
 
         return (
-            QuestionModel.update(req.body)
+          this.model.update(req.body)
                 .then(() => {
                     res.status(200).send("Question updated");
                 })
@@ -94,7 +94,7 @@ export default class QuestionService extends Service {
         
         
         return (
-            QuestionModel.remove(req.body.id)
+          this.model.remove(req.body.id)
                 .then(() => {
                     res.status(200).send("Question deleted");
                 })

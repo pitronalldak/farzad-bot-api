@@ -14,7 +14,7 @@ import QuestionApi from './rest-api/question';
 import SurveyService from './services/survey';
 import QuestionService from './services/question';
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 
 let app = express();
 app.server = http.createServer(app);
