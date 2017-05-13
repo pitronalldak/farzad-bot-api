@@ -19,9 +19,7 @@ const port = process.env.PORT || 5000;
 let app = express();
 app.server = http.createServer(app);
 
-app.use(cors({
-	exposedHeaders: config.corsHeaders
-}));
+app.use(cors());
 
 app.use(bodyParser.json({
 	limit : config.bodyLimit
