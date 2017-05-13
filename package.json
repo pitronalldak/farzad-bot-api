@@ -7,6 +7,7 @@
     "dev": "nodemon -w src --exec \"babel-node src --presets es2015,stage-0 --plugins transform-decorators-legacy\"",
     "build": "babel src -s -D -d dist --presets es2015,stage-0 --plugins transform-decorators-legacy",
     "start": "node dist",
+    "postinstall": "npm run build",
     "prestart": "npm run -s build",
     "test": "eslint src"
   },
