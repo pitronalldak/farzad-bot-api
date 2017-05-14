@@ -48,7 +48,7 @@ export default class SurveyService extends Service {
         return (
           this.model.create(req.body)
                 .then(() => {
-                    res.status(200).send("Survey created");
+                    res.status(200).send(JSON.stringify({msg: "Survey created"}));
                 })
                 .catch(error => {
                     res.status(400).send(error.message || error);
@@ -73,7 +73,7 @@ export default class SurveyService extends Service {
         return (
           this.model.update(req.body)
                 .then(() => {
-                    res.status(200).send("Survey updated");
+                    res.status(200).send(JSON.stringify({msg: "Survey updated"}));
                 })
                 .catch(error => {
                     res.status(400).send(error.message || error);
@@ -98,7 +98,7 @@ export default class SurveyService extends Service {
         return (
           this.model.remove(req.body.id)
                 .then(() => {
-                    res.status(200).send("Survey deleted");
+                    res.status(200).send(JSON.stringify({msg: "Survey deleted"}));
                 })
                 .catch(error => {
                     res.status(400).send(error.message || error);

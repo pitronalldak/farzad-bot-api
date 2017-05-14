@@ -46,7 +46,7 @@ export default class QuestionService extends Service {
         return (
           this.model.create(req.body)
                 .then(() => {
-                    res.status(200).send("Question created");
+                    res.status(200).send(JSON.stringify({msg: "Question created"}));
                 })
                 .catch(error => {
                     res.status(400).send(error.message || error);
@@ -71,7 +71,7 @@ export default class QuestionService extends Service {
         return (
           this.model.update(req.body)
                 .then(() => {
-                    res.status(200).send("Question updated");
+                    res.status(200).send(JSON.stringify({msg: "Question updated"}));
                 })
                 .catch(error => {
                     res.status(400).send(error.message || error);
@@ -96,7 +96,7 @@ export default class QuestionService extends Service {
         return (
           this.model.remove(req.body.id)
                 .then(() => {
-                    res.status(200).send("Question deleted");
+                    res.status(200).send(JSON.stringify({msg: "Question deleted"}));
                 })
                 .catch(error => {
                     res.status(400).send(error.message || error);
