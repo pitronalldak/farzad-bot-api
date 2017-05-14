@@ -26,7 +26,7 @@ export default class SurveyService extends Service {
                     res.json({data});
                 })
                 .catch(error => {
-                    res.status(400).send(error.message || error);
+                    res.status(400).send(JSON.stringify({err: error.message || error}));
                 }))
     };
     
@@ -51,7 +51,7 @@ export default class SurveyService extends Service {
                     res.status(200).send(JSON.stringify({msg: "Survey created"}));
                 })
                 .catch(error => {
-                    res.status(400).send(error.message || error);
+                    res.status(400).send(JSON.stringify({err: error.message || error}));
                 }))
     };
     
@@ -76,7 +76,7 @@ export default class SurveyService extends Service {
                     res.status(200).send(JSON.stringify({msg: "Survey updated"}));
                 })
                 .catch(error => {
-                    res.status(400).send(error.message || error);
+                    res.status(400).send(JSON.stringify({err: error.message || error}));
                 }))
     };
     
@@ -101,7 +101,7 @@ export default class SurveyService extends Service {
                     res.status(200).send(JSON.stringify({msg: "Survey deleted"}));
                 })
                 .catch(error => {
-                    res.status(400).send(error.message || error);
+                    res.status(400).send(JSON.stringify({err: error.message || error}));
                 }))
     };
 }

@@ -24,7 +24,7 @@ export default class QuestionService extends Service {
                     res.json({data});
                 })
                 .catch(error => {
-                    res.status(400).send(error.message || error);
+                    res.status(400).send(JSON.stringify({err: error.message || error}));
                 }))
     };
     
@@ -49,7 +49,7 @@ export default class QuestionService extends Service {
                     res.status(200).send(JSON.stringify({msg: "Question created"}));
                 })
                 .catch(error => {
-                    res.status(400).send(error.message || error);
+                    res.status(400).send(JSON.stringify({err: error.message || error}));
                 }))
     };
     
@@ -74,7 +74,7 @@ export default class QuestionService extends Service {
                     res.status(200).send(JSON.stringify({msg: "Question updated"}));
                 })
                 .catch(error => {
-                    res.status(400).send(error.message || error);
+                    res.status(400).send(JSON.stringify({err: error.message || error}));
                 }))
     };
     
@@ -99,7 +99,7 @@ export default class QuestionService extends Service {
                     res.status(200).send(JSON.stringify({msg: "Question deleted"}));
                 })
                 .catch(error => {
-                    res.status(400).send(error.message || error);
+                    res.status(400).send(JSON.stringify({err: error.message || error}));
                 }))
     };
 }
