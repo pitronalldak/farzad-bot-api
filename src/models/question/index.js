@@ -8,6 +8,7 @@ const ObjectId = mongoose.Types.ObjectId;
 const QuestionSchema = new mongoose.Schema({
     id: { type: String, default: '' },
     survey: { type : String },
+    type: { type : String, default : 'ownAndOptions' },
     question: { type : String, default : ''},
     answers: { type : [] },
     ownAnswer: {

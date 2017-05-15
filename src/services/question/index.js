@@ -8,7 +8,7 @@ export default class QuestionService extends Service {
         super();
         this.model = new QuestionModel();
     }
-
+    
     /**
      * Method for request all questions.
      *
@@ -19,7 +19,7 @@ export default class QuestionService extends Service {
     getAll(req, res) {
         
         return (
-          this.model.getAll()
+            this.model.getAll()
                 .then(data => {
                     res.json({data});
                 })
@@ -44,7 +44,7 @@ export default class QuestionService extends Service {
         
         
         return (
-          this.model.create(req.body)
+            this.model.create(req.body)
                 .then(() => {
                     res.status(200).send(JSON.stringify({msg: "Question created"}));
                 })
@@ -66,10 +66,10 @@ export default class QuestionService extends Service {
         // req.assert('email', 'valid email required').isEmail();
         // req.assert('email', 'required').notEmpty();
         // this.validation(req);
-
-
+        
+        
         return (
-          this.model.update(req.body)
+            this.model.update(req.body)
                 .then(() => {
                     res.status(200).send(JSON.stringify({msg: "Question updated"}));
                 })
@@ -94,7 +94,7 @@ export default class QuestionService extends Service {
         
         
         return (
-          this.model.remove(req.body.id)
+            this.model.remove(req.body.id)
                 .then(() => {
                     res.status(200).send(JSON.stringify({msg: "Question deleted"}));
                 })
