@@ -43,7 +43,7 @@ export default class QuestionModel {
     }
     
     update(question) {
-        const criteria = {id: survey.id};
+        const criteria = {id: question.id};
         delete question.id;
         
         const update = question;
