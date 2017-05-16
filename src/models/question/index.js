@@ -35,8 +35,8 @@ export default class QuestionModel {
         this.model = new Model(Question);
     }
     
-    getAll() {
-        return this.model.select({});
+    getAll(data) {
+        return this.model.select({survey: data.surveyId});
     }
     
     create(question) {

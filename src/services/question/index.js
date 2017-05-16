@@ -19,7 +19,7 @@ export default class QuestionService extends Service {
     getAll(req, res) {
         
         return (
-            this.model.getAll()
+            this.model.getAll(req.body)
                 .then(data => {
                     res.json({data});
                 })
