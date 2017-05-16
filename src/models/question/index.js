@@ -7,6 +7,7 @@ const ObjectId = mongoose.Types.ObjectId;
 
 const QuestionSchema = new mongoose.Schema({
     id: { type: String, default: '' },
+    index: { type: Number, default: '' },
     survey: { type : String },
     type: { type : String, default : 'ownAndOptions' },
     question: { type : String, default : ''},
@@ -53,5 +54,14 @@ export default class QuestionModel {
     remove(id) {
         const criteria = {id};
         return this.model.remove(criteria);
+    }
+    
+    getOrder(surveyId) {
+        return this.model.select({survey: surveyId}, null, {index: 1, id: 1});
+    }
+    
+    updateOrder(order) {
+        const request = order.map(o => this.model.update({id: o.id}, {index: o.index}));
+        return Promise.all(request);
     }
 }

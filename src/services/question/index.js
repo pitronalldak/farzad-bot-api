@@ -102,4 +102,42 @@ export default class QuestionService extends Service {
                     res.status(400).send(JSON.stringify({err: error.message || error}));
                 }))
     };
+    
+    /**
+     * Method for request questions order.
+     *
+     * @param {String} req request from client
+     * @param {String} res response to client
+     * @return {Promise} promise
+     */
+    getOrder(req, res) {
+        
+        return (
+            this.model.getOrder(req.body.surveyId)
+                .then(data => {
+                    res.json({data});
+                })
+                .catch(error => {
+                    res.status(400).send(JSON.stringify({err: error.message || error}));
+                }))
+    };
+    
+    /**
+     * Method for request questions order.
+     *
+     * @param {String} req request from client
+     * @param {String} res response to client
+     * @return {Promise} promise
+     */
+    updateOrder(req, res) {
+        
+        return (
+            this.model.updateOrder(req.body)
+                .then(() => {
+                    res.status(200).send(JSON.stringify({msg: "Order updated"}));
+                })
+                .catch(error => {
+                    res.status(400).send(JSON.stringify({err: error.message || error}));
+                }))
+    };
 }
