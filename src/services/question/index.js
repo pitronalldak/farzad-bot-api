@@ -1,6 +1,6 @@
 import Service from '../service';
 import QuestionModel from '../../models/question';
-const uuid = require('uuid/v4');
+const uuidV4 = require('uuid/v4');
 
 /**
  * Service level class with methods for questions.
@@ -39,7 +39,7 @@ export default class QuestionService extends Service {
      */
     create(req, res) {
     
-        const id = uuid.v4();
+        const id = uuidV4();
         req.body.id = id;
         return (
             this.model.create(req.body)
