@@ -34,15 +34,15 @@ export default class QuestionModel {
     constructor() {
         this.model = new Model(Question);
     }
-    
+
     getAll(data) {
         return this.model.select({survey: data.surveyId});
     }
-    
+
     create(question) {
         return this.model.create(question);
     }
-    
+
     update(question) {
         const criteria = {id: question.id};
         delete question.id;
@@ -50,16 +50,16 @@ export default class QuestionModel {
         const update = question;
         return this.model.update(criteria, update);
     }
-    
+
     remove(id) {
         const criteria = {id};
         return this.model.remove(criteria);
     }
-    
+
     getOrder(surveyId) {
         return this.model.select({survey: surveyId}, null, {index: 1, id: 1});
     }
-    
+
     updateOrder(order) {
         const request = order.map(o => this.model.update({id: o.id}, {index: o.index}));
         return Promise.all(request);
