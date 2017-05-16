@@ -16,11 +16,11 @@ export default class Model {
      */
     select(criteria, params = {}, selection = {}) {
         return new Promise((resolve, reject) => {
-            let query = this.entity.find({...criteria});
+            let query = this.entity.find(criteria);
             let single = false;
             
             if (!params.all) {
-                query = query.select({...selection});
+                query = query.select(selection);
             }
             
             if (params.sort) {
