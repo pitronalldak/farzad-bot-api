@@ -37,12 +37,6 @@ export default class SurveyService extends Service {
      * @return {Promise} promise
      */
     create(req, res) {
-        // req.assert('password', 'required').notEmpty();
-        // req.assert('password', '6 to 20 characters required').len(6, 20);
-        // req.assert('email', 'valid email required').isEmail();
-        // req.assert('email', 'required').notEmpty();
-        // this.validation(req);
-        
         
         return (
             this.model.create(req.body)
@@ -62,12 +56,6 @@ export default class SurveyService extends Service {
      * @return {Promise} promise
      */
     update(req, res) {
-        // req.assert('password', 'required').notEmpty();
-        // req.assert('password', '6 to 20 characters required').len(6, 20);
-        // req.assert('email', 'valid email required').isEmail();
-        // req.assert('email', 'required').notEmpty();
-        // this.validation(req);
-        
         
         return (
             this.model.update(req.body)
@@ -87,17 +75,30 @@ export default class SurveyService extends Service {
      * @return {Promise} promise
      */
     remove(req, res) {
-        // req.assert('password', 'required').notEmpty();
-        // req.assert('password', '6 to 20 characters required').len(6, 20);
-        // req.assert('email', 'valid email required').isEmail();
-        // req.assert('email', 'required').notEmpty();
-        // this.validation(req);
-        
         
         return (
             this.model.remove(req.body.id)
                 .then(() => {
                     res.status(200).send(JSON.stringify({msg: "Survey deleted"}));
+                })
+                .catch(error => {
+                    res.status(400).send(JSON.stringify({err: error.message || error}));
+                }))
+    };
+    
+    /**
+     * Method for activate survey .
+     *
+     * @param {String} req request from client
+     * @param {String} res response to client
+     * @return {Promise} promise
+     */
+    activate(req, res) {
+        
+        return (
+            this.model.activate(req.body)
+                .then(() => {
+                    res.status(200).send(JSON.stringify({msg: "Survey status changed"}));
                 })
                 .catch(error => {
                     res.status(400).send(JSON.stringify({err: error.message || error}));

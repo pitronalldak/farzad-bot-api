@@ -9,7 +9,8 @@ const ObjectId = mongoose.Types.ObjectId;
 const SurveySchema = new mongoose.Schema({
     id: { type: String, default: '' },
     name: { type : String, default : '' },
-    thankYou: { type : String, default : '' }
+    thankYou: { type : String, default : '' },
+    isActive: { type : Boolean, default : true }
 });
 
 
@@ -49,6 +50,12 @@ export default class SurveyModel {
     remove(id) {
         const criteria = {id};
         return this.model.remove(criteria);
+    }
+    
+    activate(data) {
+        const criteria = {id: data.id};
+        const update = {isActive: data.isActive};
+        return this.model.update(criteria, update);
     }
 }
 
