@@ -1,6 +1,6 @@
 import Service from '../service';
 import SurveyModel from '../../models/survey';
-import uuid from 'uuid/v4';
+const uuid = require('uuid/v4');
 
 /**
  * Service level class with methods for surveys.
