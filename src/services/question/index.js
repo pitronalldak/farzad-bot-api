@@ -1,5 +1,7 @@
 import Service from '../service';
 import QuestionModel from '../../models/question';
+import uuid from 'uuid/v4';
+
 /**
  * Service level class with methods for questions.
  */
@@ -36,17 +38,13 @@ export default class QuestionService extends Service {
      * @return {Promise} promise
      */
     create(req, res) {
-        // req.assert('password', 'required').notEmpty();
-        // req.assert('password', '6 to 20 characters required').len(6, 20);
-        // req.assert('email', 'valid email required').isEmail();
-        // req.assert('email', 'required').notEmpty();
-        // this.validation(req);
-        
-        
+    
+        const id = uuid.v4();
+        req.body.id = id;
         return (
             this.model.create(req.body)
                 .then(() => {
-                    res.status(200).send(JSON.stringify({msg: "Question created"}));
+                    res.json({id});
                 })
                 .catch(error => {
                     res.status(400).send(JSON.stringify({err: error.message || error}));

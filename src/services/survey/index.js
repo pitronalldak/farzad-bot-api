@@ -1,5 +1,6 @@
 import Service from '../service';
 import SurveyModel from '../../models/survey';
+import uuid from 'uuid/v4';
 
 /**
  * Service level class with methods for surveys.
@@ -37,11 +38,13 @@ export default class SurveyService extends Service {
      * @return {Promise} promise
      */
     create(req, res) {
-        
+    
+        const id = uuid.v4();
+        req.body.id = id;
         return (
             this.model.create(req.body)
                 .then(() => {
-                    res.status(200).send(JSON.stringify({msg: "Survey created"}));
+                    res.json({id});
                 })
                 .catch(error => {
                     res.status(400).send(JSON.stringify({err: error.message || error}));
