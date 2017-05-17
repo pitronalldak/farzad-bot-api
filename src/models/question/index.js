@@ -36,7 +36,7 @@ export default class QuestionModel {
     }
 
     getAll(survey) {
-        return this.model.select(survey, {sortKey: 'index', sort: -1});
+        return this.model.select(survey, {sortKey: 'index', sort: 1});
     }
 
     create(question) {
@@ -57,7 +57,7 @@ export default class QuestionModel {
     }
 
     getOrder(surveyId) {
-        return this.model.select({survey: surveyId}, {sortKey: 'index', sort: -1}, {index: 1, id: 1});
+        return this.model.select({survey: surveyId}, {sortKey: 'index', sort: 1}, {index: 1, id: 1});
     }
 
     updateOrder(order) {
