@@ -36,7 +36,7 @@ export default class QuestionModel {
     }
 
     getAll(survey) {
-        return this.model.select(survey);
+        return this.model.select(survey, {sortKey: 'index', sort: -1});
     }
 
     create(question) {
