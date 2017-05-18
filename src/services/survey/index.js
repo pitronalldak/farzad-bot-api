@@ -3,7 +3,7 @@ import SurveyModel from '../../models/survey';
 import QuestionModel from '../../models/question';
 import UserModel from '../../models/user';
 const uuidV4 = require('uuid/v4');
-const { postSpreadSheets } = require('./google-spreadsheets');
+const { postSpreadSheets } = require('../google-spreadsheets');
 
 /**
  * Service level class with methods for surveys.
