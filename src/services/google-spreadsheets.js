@@ -17,7 +17,7 @@ const TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH ||
 const TOKEN_PATH = TOKEN_DIR + 'sheets.googleapis.com-nodejs-quickstart.json';
 
 // Load client secrets from a local file.
-exports.postSpreadSheets = (questions, users, surveys) =>  fs.readFile('client_secret.json', function processClientSecrets(err, content) {
+exports.postSpreadSheets = (questions, users, surveys) => fs.readFile('client_secret.json', function processClientSecrets(err, content) {
     if (err) {
         console.log('Error loading client secret file: ' + err);
         return;
@@ -42,7 +42,7 @@ function authorize(credentials, callback) {
     const oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
     
     // Check if we have previously stored a token.
-    fs.readFile(TOKEN_PATH, function(err, token) {
+    fs.readFile(TOKEN_PATH, function (err, token) {
         if (err) {
             getNewToken(oauth2Client, callback);
         } else {
@@ -70,9 +70,9 @@ function getNewToken(oauth2Client, callback) {
         input: process.stdin,
         output: process.stdout
     });
-    rl.question('Enter the code from that page here: ', function(code) {
+    rl.question('Enter the code from that page here: ', function (code) {
         rl.close();
-        oauth2Client.getToken(code, function(err, token) {
+        oauth2Client.getToken(code, function (err, token) {
             if (err) {
                 console.log('Error while trying to retrieve access token', err);
                 return;
@@ -116,13 +116,13 @@ function toLetters(num) {
 /**
  * Print the data in a spreadsheet:
  */
-function writeDataToSheets(users, questions, survey) {
+function writeDataToSheets(auth, sheets, users, questions, survey) {
     let userList = [];
     let columns = [];
     let userQuantity = 0;
     let questionQuantity = 0;
     for (let user of users) {
-        if (user.survey === survey.name) {
+        if (user.survey === survey.id) {
             userQuantity++;
             let juser = [];
             juser.push({
@@ -142,7 +142,11 @@ function writeDataToSheets(users, questions, survey) {
             });
             for (let answer of user.answers) {
                 let answ = '';
-                if (answer.answerId) {answ = answer.answerId} else {answ = answer.answer}
+                if (answer.answerId) {
+                    answ = answer.answerId
+                } else {
+                    answ = answer.answer
+                }
                 juser.push({
                     userEnteredValue: {
                         stringValue: answ,
@@ -178,7 +182,7 @@ function writeDataToSheets(users, questions, survey) {
             }
         });
     for (let q of questions) {
-        if (q.survey === survey.name) {
+        if (q.survey === survey.id) {
             questionQuantity++;
             columns.push({
                 userEnteredValue: {
@@ -201,13 +205,13 @@ function writeDataToSheets(users, questions, survey) {
         spreadsheetId: spreadsheet,
         includeGridData: true,
         auth: auth,
-    }, function(err, receivedSpreadsheet) {
+    }, function (err, receivedSpreadsheet) {
         if (err) {
             console.log(err);
             return;
         }
         let sheetId = receivedSpreadsheet.sheets.find(sheet => sheet.properties.title === survey.name).properties.sheetId;
-        let values= [{
+        let values = [{
             values: columns,
         }];
         userList.forEach(user => values.push(user));
@@ -244,7 +248,7 @@ const listMajors = (questions, users, surveys) => (
             spreadsheetId: spreadsheet,
             includeGridData: true,
             auth: auth,
-        }, function(err, receivedSpreadsheet) {
+        }, function (err, receivedSpreadsheet) {
             if (err) {
                 console.log(err);
                 return;
@@ -263,15 +267,15 @@ const listMajors = (questions, users, surveys) => (
                             }],
                         },
                         auth: auth,
-                    }, function(err, response) {
+                    }, function (err, response) {
                         if (err) {
                             console.log(err);
                             return;
                         }
-                        writeDataToSheets(users, questions, survey);
+                        writeDataToSheets(auth, sheets, users, questions, survey);
                     })
                 } else {
-                    writeDataToSheets(users, questions, survey);
+                    writeDataToSheets(auth, sheets, users, questions, survey);
                 }
             });
         });
