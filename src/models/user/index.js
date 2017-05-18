@@ -1,39 +1,44 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
-const Schema = mongoose.Schema;
-const ObjectIdSchema = Schema.ObjectId;
+import Model from '../model';
+
+const ObjectIdSchema = mongoose.Schema.ObjectId;
 const ObjectId = mongoose.Types.ObjectId;
 
+
 const UserSchema = new Schema({
-  date: {type: String, default: ''},
-  username: {type: String, default: ''},
-  telegramId: {type: String, default: ''},
-  chatId: {type: String, default: ''},
-  answers: [{
-    answerId: {type: String, default: ''},
-    question: {type: String, default: ''},
-    questionId: {type: String, default: ''},
-    answer: {type: String, default: ''}
-  }]
+    date: {type: String, default: ''},
+    username: {type: String, default: ''},
+    telegramId: {type: String, default: ''},
+    chatId: {type: String, default: ''},
+    answers: [{
+        answerId: {type: String, default: ''},
+        question: {type: String, default: ''},
+        questionId: {type: String, default: ''},
+        answer: {type: String, default: ''}
+    }]
 });
 
-UserSchema.statics = {
-  
-  /**
-   * List questions
-   *
-   * @param {Object} telegramId
-   * @api private
-   */
-  
-  getUserById: function (telegramId) {
-    return this.findOne({telegramId})
-      .exec();
-  },
-  list: function (options) {
-    return this.find()
-      .exec();
-  }
-};
 
-mongoose.model('User', UserSchema);
+UserSchema.set('toJSON', {
+    transform: function (doc, ret) {
+        delete ret._id;
+        delete ret.__v;
+    },
+});
+
+const User = mongoose.model('User', UserSchema);
+
+/**
+ * Service level class with methods for user.
+ */
+export default class SurveyModel {
+    constructor() {
+        this.model = new Model(User);
+    }
+    
+    getAll() {
+        return this.model.select({});
+    }
+}
+

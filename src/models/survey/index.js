@@ -57,5 +57,6 @@ export default class SurveyModel {
         const update = {isActive: data.isActive};
         return this.model.update(criteria, update);
     }
+    
 }
 
