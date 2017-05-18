@@ -76,7 +76,7 @@ export default class SurveyService extends Service {
         return (
             this.model.create(req.body)
                 .then(() => {
-                    res.status(200).send(JSON.stringify({msg: "Survey deleted"}));
+                    res.status(200).send(JSON.stringify({id}));
                 })
                 .catch(error => {
                     res.status(400).send(JSON.stringify({err: error.message || error}));
