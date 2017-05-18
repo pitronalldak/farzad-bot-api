@@ -17,7 +17,7 @@ const TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH ||
 const TOKEN_PATH = TOKEN_DIR + 'sheets.googleapis.com-nodejs-quickstart.json';
 
 // Load client secrets from a local file.
-exports.postSpreadSheets = (questions, users, surveys) => fs.readFile('client_secret.json', function processClientSecrets(err, content) {
+exports.postSpreadSheets = (questions, users, surveys) => fs.readFile('./client_secret.json', function processClientSecrets(err, content) {
     if (err) {
         console.log('Error loading client secret file: ' + err);
         return;
