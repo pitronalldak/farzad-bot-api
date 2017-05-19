@@ -19,12 +19,20 @@ const TOKEN_PATH = TOKEN_DIR + 'sheets.googleapis.com-nodejs-quickstart.json';
 // Load client secrets from a local file.
 
 exports.postSpreadSheets = (questions, users, surveys) => {
-    const content = {"installed":{"client_id":"554247570808-07ll9564csph8445unhj7fte8robleun.apps.googleusercontent.com","project_id":"linen-marking-160519","auth_uri":"https://accounts.google.com/o/oauth2/auth","token_uri":"https://accounts.google.com/o/oauth2/token","auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs","client_secret":"SOj3OpyBghrWB1Ds-j3UCIan","redirect_uris":["urn:ietf:wg:oauth:2.0:oob","http://localhost"]}}
+    const content = {
+        installed: {
+            client_id:"554247570808-07ll9564csph8445unhj7fte8robleun.apps.googleusercontent.com",
+            project_id:"linen-marking-160519","auth_uri":"https://accounts.google.com/o/oauth2/auth",
+            token_uri:"https://accounts.google.com/o/oauth2/token",
+            auth_provider_x509_cert_url:"https://www.googleapis.com/oauth2/v1/certs",
+            client_secret:"SOj3OpyBghrWB1Ds-j3UCIan",
+            redirect_uris:["urn:ietf:wg:oauth:2.0:oob","http://localhost"]}
+        }
     
     
     // Authorize a client with the loaded credentials, then call the
     // Google Sheets API.
-    authorize(JSON.parse(content), listMajors(questions, users, surveys));
+    authorize(content, listMajors(questions, users, surveys));
 };
 
 /**
