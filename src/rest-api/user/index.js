@@ -11,7 +11,7 @@ export default class UserApi {
      * Authorization routes list
      */
     register = () => {
-        this.app.post('/user/sign-up', (req, res) => this.service.createUser(req, res));
-        this.app.post('/user/login', (req, res) => this.service.login(req, res));
+        this.app.post('/users/sign-up', (req, res) => this.service.createUser(req, res));
+        this.app.post('/users/login', (req, res) => this.service.login(req, res));
     }
 }

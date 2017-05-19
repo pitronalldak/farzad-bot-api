@@ -108,8 +108,7 @@ export default class SurveyService extends Service {
                         }
                     }
                     if (unfinishedUsers.length) {
-                       
-                                
+                        
                         let j;
                         const sendInterval = setInterval(function () {
                             if (j === undefined) j = 0;

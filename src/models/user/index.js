@@ -19,6 +19,10 @@ const UserSchema = new mongoose.Schema({
     }]
 });
 
+const UserBOSchema = new mongoose.Schema({
+    email: {type: String, required : true},
+    password: {type: String, required : true},
+});
 
 UserSchema.set('toJSON', {
     transform: function (doc, ret) {
@@ -27,14 +31,27 @@ UserSchema.set('toJSON', {
     },
 });
 
+UserBOSchema.set('toJSON', {
+    transform: function (doc, ret) {
+        delete ret._id;
+        delete ret.__v;
+    },
+});
+
 const User = mongoose.model('User', UserSchema);
+const UserBO = mongoose.model('UserBO', UserBOSchema);
 
 /**
  * Service level class with methods for user.
  */
-export default class SurveyModel {
+export default class UserModel {
     constructor() {
         this.model = new Model(User);
+        this.modelBO = new Model(UserBO);
+    }
+    
+    get(email) {
+        return this.modelBO.select({email});
     }
     
     getAll() {

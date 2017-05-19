@@ -1,7 +1,7 @@
 /**
  * Module dependencies.
  */
-const crypto = require('crypto');
+// const crypto = require('crypto');
 import getHash from './pass';
 import Service from '../service';
 
@@ -23,14 +23,14 @@ export default class UserService extends Service {
      * @return {Promise} promise
      */
     createUser(req, res) {
-        req.assert('email', 'required').notEmpty();
-        req.assert('email', 'valid email required').isEmail();
-        req.assert('password', 'required').notEmpty();
-        req.assert('password', '6 to 20 characters required').len(6, 20);
-        req.assert('userName', 'required').notEmpty();
-        req.assert('location', 'required').notEmpty();
-        req.assert('phone', 'required').notEmpty();
-        this.validation(req);
+        // req.assert('email', 'required').notEmpty();
+        // req.assert('email', 'valid email required').isEmail();
+        // req.assert('password', 'required').notEmpty();
+        // req.assert('password', '6 to 20 characters required').len(6, 20);
+        // req.assert('userName', 'required').notEmpty();
+        // req.assert('location', 'required').notEmpty();
+        // req.assert('phone', 'required').notEmpty();
+        // this.validation(req);
 
         //generate a salt for  and new password for db
         const salt = crypto.randomBytes(64).toString('base64');
@@ -66,17 +66,16 @@ export default class UserService extends Service {
 
 
         return (
-            this.dao.getUser(req.body.email)
+            this.model.get(req.body.email)
                 .then(user => {
                     if (!user) {
                         res.status(400).send("User doesn't exist");
                     } else {
-                        const hash = getHash(req.body.password, user.salt);
-                        if (hash == user.password) {
+                        // const hash = getHash(req.body.password, user.salt);
+                        if (user.password === req.body.password) {
                             req.session.regenerate(() => {
                                 req.session.user = user;
                                 delete user.password;
-                                delete user.salt;
                                 res.json(user);
                             });
                         } else {
