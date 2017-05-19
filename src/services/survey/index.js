@@ -18,7 +18,7 @@ const token = '329116244:AAHDzSnwr49C2PIe4OES2HJgrZTB0QLqc_w';
  * Service level class with methods for surveys.
  */
 export default class SurveyService extends Service {
-    constructor(dao) {
+    constructor() {
         super();
         this.model = new SurveyModel();
         this.modelQuestion = new QuestionModel();

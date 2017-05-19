@@ -4,14 +4,15 @@
 // const crypto = require('crypto');
 import getHash from './pass';
 import Service from '../service';
+import UserModel from '../../models/user';
 
 /**
  * Service level class with methods for authorization.
  */
 export default class UserService extends Service {
-    constructor(dao) {
+    constructor() {
         super();
-        this.dao = dao;
+        this.model = new UserModel();
     }
 
 
