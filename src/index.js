@@ -10,9 +10,11 @@ import config from './config.json';
 
 import SurveyApi from './rest-api/survey';
 import QuestionApi from './rest-api/question';
+import UserApi from './rest-api/user';
 
 import SurveyService from './services/survey';
 import QuestionService from './services/question';
+import UserService from './services/user';
 
 const port = process.env.PORT || 5000;
 
@@ -68,5 +70,6 @@ function listen () {
 
 new SurveyApi(app, new SurveyService()).register();
 new QuestionApi(app, new QuestionService()).register();
+new UserApi(app, new UserService()).register();
 
 export default app;
