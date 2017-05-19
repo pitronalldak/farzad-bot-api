@@ -59,11 +59,11 @@ export default class UserService extends Service {
      * @return {Promise} promise
      */
     login = (req, res) => {
-        req.assert('password', 'required').notEmpty();
-        req.assert('password', '6 to 20 characters required').len(6, 20);
-        req.assert('email', 'valid email required').isEmail();
-        req.assert('email', 'required').notEmpty();
-        this.validation(req);
+        // req.assert('password', 'required').notEmpty();
+        // req.assert('password', '6 to 20 characters required').len(6, 20);
+        // req.assert('email', 'valid email required').isEmail();
+        // req.assert('email', 'required').notEmpty();
+        // this.validation(req);
 
 
         return (
