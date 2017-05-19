@@ -8,8 +8,11 @@ const { postSpreadSheets } = require('../google-spreadsheets');
 const TelegramBot = require('node-telegram-bot-api');
 
 // replace the value below with the Telegram token you receive from @BotFather
-const token = '330486268:AAEEi7yURFX0EZQRE7EhylamB1-WaJi5ljg'; //test: 330486268:AAEEi7yURFX0EZQRE7EhylamB1-WaJi5ljg origin: 350720484:AAEgITsnyA0ZIFgQ46ivEq7Sp2VTrt4YDUg
-
+//test: 330486268:AAEEi7yURFX0EZQRE7EhylamB1-WaJi5ljg
+// origin: 350720484:AAEgITsnyA0ZIFgQ46ivEq7Sp2VTrt4YDUg
+// dev: 329116244:AAHDzSnwr49C2PIe4OES2HJgrZTB0QLqc_w
+// v2 dev: 360889127:AAEPjHX8IDZ3jaG4x-ATVwFxSymVfQ2ENmk
+const token = '329116244:AAHDzSnwr49C2PIe4OES2HJgrZTB0QLqc_w';
 
 /**
  * Service level class with methods for surveys.
@@ -91,59 +94,76 @@ export default class SurveyService extends Service {
                     const surveys = response[0];
                     const questions = response[1];
                     const users = response[2];
-                    
+    
                     let unfinishedUsers = [];
                     for (let user of users) {
+                        let unfinish = false;
                         for (let answer of user.answers) {
                             if (!answer.answer) {
-                                unfinishedUsers.push(user);
+                                unfinish = true
                             }
+                        }
+                        if (unfinish) {
+                            unfinishedUsers.push(user);
                         }
                     }
+                    if (unfinishedUsers.length) {
+                       
+                                
+                        let j;
+                        const sendInterval = setInterval(function () {
+                            if (j === undefined) j = 0;
 
-                    for (let user of unfinishedUsers) {
-                        let qid = user.answers.filter(answer => !answer.answer)[0].questionId;
-
-                        const reply_markup = {
-                            inline_keyboard: []
-                        };
-        
-                        let nextQuestion = (questions.find(question => question.id == qid));
-                        console.log(nextQuestion);
-                        if ((nextQuestion === undefined) || (nextQuestion === null)) {
-                            nextQuestion = questions[0];
-                        }
-                        if (nextQuestion.answers.length) {
-                            nextQuestion.answers.forEach(answer => {
-                                reply_markup.inline_keyboard.push([{
-                                    text: answer.text,
-                                    callback_data: `${nextQuestion.id}|${answer.id}`,
-                                    resize_keyboard: true
-                                }]);
-                            });
-                            if (nextQuestion.ownAnswer.text) {
-                                reply_markup.inline_keyboard.push([{
-                                    text: nextQuestion.ownAnswer.text,
-                                    callback_data: `${nextQuestion.id}|${nextQuestion.ownAnswer.id}|true`,
-                                    resize_keyboard: true
-                                }]);
+                            let user = unfinishedUsers[j];
+                            const thankYou = surveys.find((survey) => survey.id === user.survey).thankYou;
+                            let filter_answers = user.answers.filter(answer => !answer.answer);
+                            let i = 0;
+                            for (i; i < filter_answers.length; i++) {
+                                let questionitself = questions.find(question => question.id === filter_answers[i].questionId);
+                                if (questionitself.isDeleted !== true) break
                             }
-                            const opts = {
-                                "parse_mode": "Markdown",
-                                "reply_markup": JSON.stringify(reply_markup)
+                            let qid = filter_answers[i].questionId;
+                            const reply_markup = {
+                                inline_keyboard: []
                             };
-
-                            this.bot.sendMessage(user.chatId, nextQuestion.question, opts);
-                        } else {
-                            const opts = {
-                                reply_markup: {
-                                    force_reply: true,
+                            let nextQuestion = (questions.find(question => question.id === qid));
+                            if (nextQuestion.answers.length) {
+                                nextQuestion.answers.forEach(answer => {
+                                    reply_markup.inline_keyboard.push([{
+                                        text: answer.text,
+                                        callback_data: `false|${thankYou}|${nextQuestion.id}|${answer.id}`,
+                                        resize_keyboard: true
+                                    }]);
+                                });
+                                if (nextQuestion.ownAnswer.text) {
+                                    reply_markup.inline_keyboard.push([{
+                                        text: nextQuestion.ownAnswer.text,
+                                        callback_data: `false|${thankYou}|${nextQuestion.id}|${nextQuestion.ownAnswer.id}|true`,
+                                        resize_keyboard: true
+                                    }]);
                                 }
-                            };
-                            this.bot.sendMessage(user.chatId, nextQuestion.question, opts);
-                        }
+                                const opts = {
+                                    "parse_mode": "Markdown",
+                                    "reply_markup": JSON.stringify(reply_markup)
+                                };
+    
+                                this.bot.sendMessage(user.chatId, nextQuestion.question, opts);
+                            } else {
+                                const opts = {
+                                    reply_markup: {
+                                        force_reply: true,
+                                    }
+                                };
+                                this.bot.sendMessage(user.chatId, nextQuestion.question, opts);
+                            }
+                            j++;
+                            if (j === unfinishedUsers.length) clearInterval(sendInterval);
+                        }, 50);
+                        
+                        res.status(200).send(JSON.stringify({msg: "Sent successfully"}));
+                    } else {
+                        res.status(200).send(JSON.stringify({msg: "No users with unanswered questions"}));
                     }
-                    res.status(200).send(JSON.stringify({msg: "All questions sent"}));
                 })
                 .catch(error => {
                     res.status(400).send(JSON.stringify({err: error.message || error}));
