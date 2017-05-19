@@ -57,6 +57,8 @@ export default class SurveyService extends Service {
                      try {
                          postSpreadSheets(questions, users, surveys);
                          res.status(200).send(JSON.stringify({msg: "Migration complete"}));
+                     } catch (e) {
+                         console.log(e);
                      }
                  })
                 .catch(error => {

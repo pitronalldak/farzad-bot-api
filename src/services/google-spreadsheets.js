@@ -27,7 +27,7 @@ exports.postSpreadSheets = (questions, users, surveys) => {
             auth_provider_x509_cert_url:"https://www.googleapis.com/oauth2/v1/certs",
             client_secret:"SOj3OpyBghrWB1Ds-j3UCIan",
             redirect_uris:["urn:ietf:wg:oauth:2.0:oob","http://localhost"]}
-        }
+        };
     
     
     // Authorize a client with the loaded credentials, then call the
