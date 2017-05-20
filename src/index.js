@@ -23,6 +23,14 @@ const port = process.env.PORT || 5000;
 let app = express();
 app.server = http.createServer(app);
 
+const corsOptions = {
+    origin: ['http://localhost:3000', 'https://survey-dashboard.herokuapp.com/'],
+    optionsSuccessStatus: 200,
+    methods: 'GET,POST,PUT,DELETE',
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+};
+
 app.use(cors());
 
 app.use(bodyParser.json({
