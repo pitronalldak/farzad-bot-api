@@ -68,6 +68,7 @@ export default class UserService extends Service {
                     if (!user) {
                         res.status(400).send(JSON.stringify("User doesn't exist"));
                     } else {
+                        console.log(user);
                         if (user.password === req.body.password) {
                             const accessToken = uuidV4();
                             this.model.updateUserBO({email: req.body.email}, {accessToken})
