@@ -91,7 +91,7 @@ export default class UserService extends Service {
     logout(req, res) {
         const accessToken = req.cookies.accessToken;
         return (
-            this.model.updateUserBO({accessToken: req.body.accessToken}, {accessToken: null})
+            this.model.updateUserBO({accessToken}, {accessToken: null})
                 .then(data => {
                     res.status(200).send(JSON.stringify({msg: "Logout success"}));
                 })
