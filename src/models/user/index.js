@@ -22,6 +22,7 @@ const UserSchema = new mongoose.Schema({
 const UserBOSchema = new mongoose.Schema({
     email: {type: String, required : true},
     password: {type: String, required : true},
+    accessToken: {type: String},
 });
 
 UserSchema.set('toJSON', {
@@ -50,8 +51,12 @@ export default class UserModel {
         this.modelBO = new Model(UserBO);
     }
     
-    get(email) {
-        return this.modelBO.select({email});
+    get(criteria) {
+        return this.modelBO.select(criteria);
+    }
+    
+    updateUserBO(criteria, update) {
+        return this.modelBO.update(criteria, update);
     }
     
     getAll() {

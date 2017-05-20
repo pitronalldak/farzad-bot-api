@@ -5,6 +5,7 @@
 import getHash from './pass';
 import Service from '../service';
 import UserModel from '../../models/user';
+import UserBOModel from '../../models/user';
 
 /**
  * Service level class with methods for authorization.
@@ -13,6 +14,7 @@ export default class UserService extends Service {
     constructor() {
         super();
         this.model = new UserModel();
+        this.modelBO = new UserBOModel();
     }
 
 
@@ -67,18 +69,19 @@ export default class UserService extends Service {
 
 
         return (
-            this.model.get(req.body.email)
+            this.model.get({email: req.body.email})
                 .then(user => {
                     if (!user) {
                         res.status(400).send("User doesn't exist");
                     } else {
-                        // const hash = getHash(req.body.password, user.salt);
                         if (user.password === req.body.password) {
-                            req.session.regenerate(() => {
-                                req.session.user = user;
-                                delete user.password;
-                                res.json(user);
-                            });
+                            let accessToken = uuid.v4();
+                            this.modelBO.updateUserBO({email}, {accessToken})
+                                .then(() => {
+                                    
+                                    res.cookie('accessToken',user.accessToken, { maxAge: 9000000, httpOnly: true });
+                                    res.status(200).send(JSON.stringify({msg: "Login success"}));
+                                })
                         } else {
                             res.status(400).send("Invalid password");
                         }

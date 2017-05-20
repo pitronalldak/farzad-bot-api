@@ -3,6 +3,8 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
+
 import expressValidator from 'express-validator';
 import session from 'express-session';
 
@@ -26,6 +28,7 @@ app.use(cors());
 app.use(bodyParser.json({
 	limit : config.bodyLimit
 }));
+app.use(cookieParser());
 
 app.use(session({
     resave: false, // don't save session if unmodified
