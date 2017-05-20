@@ -5,7 +5,6 @@
 import getHash from './pass';
 import Service from '../service';
 import UserModel from '../../models/user';
-import UserBOModel from '../../models/user';
 
 /**
  * Service level class with methods for authorization.
@@ -14,7 +13,6 @@ export default class UserService extends Service {
     constructor() {
         super();
         this.model = new UserModel();
-        this.modelBO = new UserBOModel();
     }
 
 
@@ -60,23 +58,23 @@ export default class UserService extends Service {
      * @param {String} res response to client
      * @return {Promise} promise
      */
-    login = (req, res) => {
+    login(req, res) {
         // req.assert('password', 'required').notEmpty();
         // req.assert('password', '6 to 20 characters required').len(6, 20);
         // req.assert('email', 'valid email required').isEmail();
         // req.assert('email', 'required').notEmpty();
         // this.validation(req);
 
-
         return (
-            this.model.get({email: req.body.email})
+            this.model.getUserBO({email: req.body.email})
                 .then(user => {
+                    console.log('jashdhasjk');
                     if (!user) {
                         res.status(400).send("User doesn't exist");
                     } else {
                         if (user.password === req.body.password) {
                             let accessToken = uuid.v4();
-                            this.modelBO.updateUserBO({email}, {accessToken})
+                            this.model.updateUserBO({email: req.body.email}, {accessToken})
                                 .then(() => {
                                     
                                     res.cookie('accessToken',user.accessToken, { maxAge: 9000000, httpOnly: true });

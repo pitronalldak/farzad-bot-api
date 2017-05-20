@@ -51,7 +51,7 @@ export default class UserModel {
         this.modelBO = new Model(UserBO);
     }
     
-    get(criteria) {
+    getUserBO(criteria) {
         return this.modelBO.select(criteria);
     }
     
