@@ -6,7 +6,6 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 
 import expressValidator from 'express-validator';
-import session from 'express-session';
 
 import config from './config.json';
 
@@ -24,26 +23,20 @@ let app = express();
 app.server = http.createServer(app);
 
 const corsOptions = {
-    origin: ['http://localhost:3000', 'https://survey-dashboard.herokuapp.com/'],
+    origin: ['http://localhost:3000', 'https://survey-dashboard.herokuapp.com'],
     optionsSuccessStatus: 200,
     methods: 'GET,POST,PUT,DELETE',
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
 };
 
-app.use(cors(corsOptions));
 
 app.use(bodyParser.json({
 	limit : config.bodyLimit
 }));
 app.use(cookieParser());
 
-app.use(session({
-    resave: false, // don't save session if unmodified
-    saveUninitialized: false, // don't create session until something stored
-    secret: 'shhhh, very secret',
-    cookie: { secure: true }
-}));
+app.use(cors(corsOptions));
 
 app.use(expressValidator({
     errorFormatter: (param, msg, value) => {
