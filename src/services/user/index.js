@@ -61,7 +61,7 @@ export default class UserService extends Service {
             this.model.getUserBO({email: req.body.email})
                 .then(user => {
                     if (!user) {
-                        res.status(400).send(JSON.stringify({msg: "User doesn't exist"}));
+                        res.status(400).send(JSON.stringify({err: "User doesn't exist"}));
                     } else {
                         if (user.password === req.body.password) {
                             delete user.password;
@@ -72,7 +72,7 @@ export default class UserService extends Service {
                                     res.json({user});
                                 })
                         } else {
-                            res.status(400).send(JSON.stringify({msg: "Invalid password"}));
+                            res.status(400).send(JSON.stringify({err: "Invalid password"}));
                         }
                     }
                 })
@@ -111,13 +111,13 @@ export default class UserService extends Service {
         const accessToken = req.cookies.accessToken;
     
         if (!accessToken) {
-            res.status(401).send(JSON.stringify({msg: "Not authorize"}));
+            res.status(401).send(JSON.stringify({err: "Not authorize"}));
         }
         return (
             this.model.getUserBO({accessToken: req.body.accessToken})
                 .then(user => {
                     if (!user) {
-                        res.status(401).send(JSON.stringify({msg: "Not authorize"}));
+                        res.status(401).send(JSON.stringify({err: "Not authorize"}));
                     } else {
                         res.json({email: user.email});
                     }
