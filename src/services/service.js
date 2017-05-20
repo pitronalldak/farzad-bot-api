@@ -5,7 +5,6 @@ import UserBOModel from '../models/user';
 export default class Service {
     
     constructor() {
-        super();
         this.model = new UserBOModel();
     }
     
