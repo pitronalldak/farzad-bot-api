@@ -1,7 +1,4 @@
-/**
- * Module dependencies.
- */
-// const crypto = require('crypto');
+const uuidV4 = require('uuid/v4');
 import getHash from './pass';
 import Service from '../service';
 import UserModel from '../../models/user';
@@ -73,7 +70,7 @@ export default class UserService extends Service {
                         res.status(400).send("User doesn't exist");
                     } else {
                         if (user.password === req.body.password) {
-                            let accessToken = uuid.v4();
+                            const accessToken = uuidV4();
                             this.model.updateUserBO({email: req.body.email}, {accessToken})
                                 .then(() => {
                                     

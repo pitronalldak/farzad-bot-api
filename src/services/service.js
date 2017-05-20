@@ -1,5 +1,4 @@
 var util = require('util');
-import uuid from 'node-uuid';
 import UserBOModel from '../models/user';
 
 export default class Service {
