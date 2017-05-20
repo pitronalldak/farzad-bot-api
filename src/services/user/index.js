@@ -65,9 +65,8 @@ export default class UserService extends Service {
         return (
             this.model.getUserBO({email: req.body.email})
                 .then(user => {
-                    console.log('jashdhasjk');
                     if (!user) {
-                        res.status(400).send("User doesn't exist");
+                        res.status(400).send(JSON.stringify("User doesn't exist"));
                     } else {
                         if (user.password === req.body.password) {
                             const accessToken = uuidV4();
@@ -78,7 +77,7 @@ export default class UserService extends Service {
                                     res.status(200).send(JSON.stringify({msg: "Login success"}));
                                 })
                         } else {
-                            res.status(400).send("Invalid password");
+                            res.status(400).send(JSON.stringify("Invalid password"));
                         }
                     }
                 })
