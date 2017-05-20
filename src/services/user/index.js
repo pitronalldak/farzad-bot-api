@@ -109,7 +109,8 @@ export default class UserService extends Service {
      */
     getUser(req, res) {
         const accessToken = req.cookies.accessToken;
-    
+        console.log(req.cookies.accessToken);
+        console.log(req.cookies);
         if (!accessToken) {
             res.status(401).send(JSON.stringify({err: "Not authorize"}));
         }
