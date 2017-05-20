@@ -61,7 +61,7 @@ export default class UserService extends Service {
         // req.assert('email', 'valid email required').isEmail();
         // req.assert('email', 'required').notEmpty();
         // this.validation(req);
-        console.log(req.body);
+        console.log(req.body.email);
         return (
             this.model.getUserBO({email: req.body.email})
                 .then(user => {
