@@ -61,12 +61,12 @@ export default class UserService extends Service {
         // req.assert('email', 'valid email required').isEmail();
         // req.assert('email', 'required').notEmpty();
         // this.validation(req);
-
+        console.log(req.body);
         return (
             this.model.getUserBO({email: req.body.email})
                 .then(user => {
                     if (!user) {
-                        res.status(400).send(JSON.stringify("User doesn't exist"));
+                        res.status(400).send(JSON.stringify({msg: "User doesn't exist"}));
                     } else {
                         console.log(user);
                         if (user.password === req.body.password) {
@@ -78,7 +78,7 @@ export default class UserService extends Service {
                                     res.status(200).send(JSON.stringify({msg: "Login success"}));
                                 })
                         } else {
-                            res.status(400).send(JSON.stringify("Invalid password"));
+                            res.status(400).send(JSON.stringify({msg: "Invalid password"}));
                         }
                     }
                 })
