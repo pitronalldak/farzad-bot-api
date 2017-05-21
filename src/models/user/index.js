@@ -52,7 +52,6 @@ export default class UserModel {
     }
     
     getUserBO(criteria) {
-    	console.log(criteria);
         return this.modelBO.select(criteria, {limit: 1});
     }
     
