@@ -219,13 +219,16 @@ export default class SurveyService extends Service {
     remove(req, res) {
         
         return (
-            this.model.remove(req.body.id)
-                .then(() => {
-                    res.status(200).send(JSON.stringify({msg: "Survey deleted"}));
-                })
-                .catch(error => {
-                    res.status(400).send(JSON.stringify({err: error.message || error}));
-                }))
+            Promise.all([
+                this.model.remove(req.body.id),
+                this.modelUser.removeSurvey(req.body.id)
+            ])
+            .then(() => {
+                res.status(200).send(JSON.stringify({msg: "Survey deleted"}));
+            })
+            .catch(error => {
+                res.status(400).send(JSON.stringify({err: error.message || error}));
+            }))
     };
     
     /**

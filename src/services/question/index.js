@@ -10,7 +10,7 @@ export default class QuestionService extends Service {
     constructor() {
         super();
         this.model = new QuestionModel();
-        this.userModel = new UserModel();
+        this.modelUser = new UserModel();
     }
     
     /**
@@ -46,16 +46,8 @@ export default class QuestionService extends Service {
         return (
             this.model.create(req.body)
                 .then(() => {
-	                this.userModel.getAll()
-		                .then((users) => {
-			                console.log(users[0]);
-			                console.log(req.body);
-			                console.log(users.some(user => user.survey === req.body.survey));
-			                if (users.some(user => user.survey === req.body.survey)) {
-				                console.log(users);
-			                }
-			                res.json({ id });
-		                })
+	                this.modelUser.createQuestion(id, req.body.question, req.body.survey)
+                        .then(() => res.json({ id }))
                 })
                 .catch(error => {
                     res.status(400).send(JSON.stringify({err: error.message || error}));
@@ -103,13 +95,16 @@ export default class QuestionService extends Service {
         
         
         return (
-            this.model.remove(req.body.id)
-                .then(() => {
-                    res.status(200).send(JSON.stringify({msg: "Question deleted"}));
-                })
-                .catch(error => {
-                    res.status(400).send(JSON.stringify({err: error.message || error}));
-                }))
+          Promise.all([
+            this.model.remove(req.body.id),
+            this.modelUser.removeQuestion(req.body.id)
+          ])
+            .then(() => {
+                res.status(200).send(JSON.stringify({msg: "Question deleted"}));
+            })
+            .catch(error => {
+                res.status(400).send(JSON.stringify({err: error.message || error}));
+            }))
     };
     
     /**

@@ -20,8 +20,8 @@ const UserSchema = new mongoose.Schema({
 });
 
 const UserBOSchema = new mongoose.Schema({
-    email: {type: String, required : true},
-    password: {type: String, required : true},
+    email: {type: String, required: true},
+    password: {type: String, required: true},
     accessToken: {type: String},
 });
 
@@ -50,11 +50,11 @@ export default class UserModel {
         this.model = new Model(User);
         this.modelBO = new Model(UserBO);
     }
-
-	getUser(criteria) {
-		return this.model.select(criteria, {limit: 1});
-	}
-
+    
+    getUser(criteria) {
+        return this.model.select(criteria, {limit: 1});
+    }
+    
     getUserBO(criteria) {
         return this.modelBO.select(criteria, {limit: 1});
     }
@@ -65,6 +65,60 @@ export default class UserModel {
     
     getAll() {
         return this.model.select({});
+    }
+    
+    removeQuestion(id) {
+        return (
+            this.model.select({})
+                .then(users => {
+                    const promises = [];
+                    users.forEach(u => {
+                        const answers = u.answers;
+                        const answer = answers.find(a => a.questionId === id);
+                        if (answer) {
+                            answer.isDeleted = true;
+                            promises.push(this.model.update({telegramId: u.telegramId}, {answers}));
+                        }
+                    });
+                    Promise.all(promises);
+                })
+        )
+    }
+    
+    removeSurvey(id) {
+        return (
+            this.model.select({})
+                .then(users => {
+                    const promises = [];
+                    users.forEach(u => {
+                        if (u.survey === id) {
+                            const answers = u.answers;
+                            answers.forEach(a => {
+                                a.isDeleted = true;
+                            });
+                            promises.push(this.model.update({telegramId: u.telegramId}, {answers}));
+                        }
+                    });
+                    Promise.all(promises);
+                })
+        )
+    }
+    
+    createQuestion(id, question, survey) {
+        return (
+            this.model.select({})
+                .then(users => {
+                    const promises = [];
+                    users.forEach(u => {
+                        if (u.survey === survey) {
+                            const answers = u.answers;
+                            answers.push({answer: '', questionId: id, question: question });
+                            promises.push(this.model.update({telegramId: u.telegramId}, {answers}));
+                        }
+                    });
+                    Promise.all(promises);
+                })
+        )
     }
 }
 

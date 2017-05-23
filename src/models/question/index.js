@@ -36,7 +36,11 @@ export default class QuestionModel {
     }
 
     getAll(survey) {
-        return this.model.select(survey, {sortKey: 'index', sort: 1});
+        const criteria = {
+          ...survey,
+          isDeleted: false
+        };
+        return this.model.select(criteria, {sortKey: 'index', sort: 1});
     }
 
     create(question) {
@@ -53,7 +57,7 @@ export default class QuestionModel {
 
     remove(id) {
         const criteria = {id};
-        return this.model.remove(criteria);
+        return this.model.update(criteria, {isDeleted: true});
     }
 
     getOrder(surveyId) {
