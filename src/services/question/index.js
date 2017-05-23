@@ -1,5 +1,6 @@
 import Service from '../service';
 import QuestionModel from '../../models/question';
+import UserModel from '../../models/user';
 const uuidV4 = require('uuid/v4');
 
 /**
@@ -9,6 +10,7 @@ export default class QuestionService extends Service {
     constructor() {
         super();
         this.model = new QuestionModel();
+        this.userModel = new UserModel();
     }
     
     /**
@@ -44,7 +46,16 @@ export default class QuestionService extends Service {
         return (
             this.model.create(req.body)
                 .then(() => {
-                    res.json({id});
+	                this.userModel.getAll()
+		                .then((users) => {
+			                console.log(users[0]);
+			                console.log(req.body);
+			                console.log(users.some(user => user.survey === req.body.survey));
+			                if (users.some(user => user.survey === req.body.survey)) {
+				                console.log(users);
+			                }
+			                res.json({ id });
+		                })
                 })
                 .catch(error => {
                     res.status(400).send(JSON.stringify({err: error.message || error}));
