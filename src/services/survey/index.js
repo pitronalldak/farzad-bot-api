@@ -2,7 +2,7 @@ import Service from '../service';
 import SurveyModel from '../../models/survey';
 import QuestionModel from '../../models/question';
 import UserModel from '../../models/user';
-import {bot} from '../../index';
+import { bot } from '../../index';
 
 const uuidV4 = require('uuid/v4');
 const { postSpreadSheets } = require('../google-spreadsheets');
