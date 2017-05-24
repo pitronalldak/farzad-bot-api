@@ -15,7 +15,8 @@ const QuestionSchema = new mongoose.Schema({
     ownAnswer: {
         id: { type: String, default: '' },
         text: { type: String, default: '' }
-    }
+    },
+	isDeleted: { type : Boolean, default : false }
 });
 
 QuestionSchema.set('toJSON', {

@@ -64,8 +64,9 @@ export default class SurveyService extends Service {
                      const questions = response[1];
                      const users = response[2];
                      try {
-                         postSpreadSheets(questions, users, surveys);
-                         res.status(200).send(JSON.stringify({msg: "Migration complete"}));
+                         postSpreadSheets(questions, users, surveys, () => {
+                         	res.status(200).send(JSON.stringify({msg: "Migration complete"}))
+                         });
                      } catch (e) {
                          console.log(e);
                      }
@@ -114,6 +115,9 @@ export default class SurveyService extends Service {
                             if (j === undefined) j = 0;
 
                             let user = unfinishedUsers[j];
+	                        user.answers.sort((a, b) => {
+		                        return questions.find(q => q.id === a.questionId).index - questions.find(q => q.id === b.questionId).index
+	                        });
                             const thankYou = surveys.find((survey) => survey.id === user.survey).thankYou;
                             let filter_answers = user.answers.filter(answer => !answer.answer);
                             let i = 0;
@@ -219,16 +223,13 @@ export default class SurveyService extends Service {
     remove(req, res) {
         
         return (
-            Promise.all([
-                this.model.remove(req.body.id),
-                this.modelUser.removeSurvey(req.body.id)
-            ])
-            .then(() => {
-                res.status(200).send(JSON.stringify({msg: "Survey deleted"}));
-            })
-            .catch(error => {
-                res.status(400).send(JSON.stringify({err: error.message || error}));
-            }))
+            this.model.remove(req.body.id)
+	            .then(() => {
+	                res.status(200).send(JSON.stringify({msg: "Survey deleted"}));
+	            })
+	            .catch(error => {
+	                res.status(400).send(JSON.stringify({err: error.message || error}));
+	            }))
     };
     
     /**

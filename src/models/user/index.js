@@ -8,6 +8,7 @@ const ObjectId = mongoose.Types.ObjectId;
 
 const UserSchema = new mongoose.Schema({
     date: {type: String, default: ''},
+		survey: {type: String, default: ''},
     username: {type: String, default: ''},
     telegramId: {type: String, default: ''},
     chatId: {type: String, default: ''},
@@ -15,7 +16,8 @@ const UserSchema = new mongoose.Schema({
         answerId: {type: String, default: ''},
         question: {type: String, default: ''},
         questionId: {type: String, default: ''},
-        answer: {type: String, default: ''}
+        answer: {type: String, default: ''},
+	    isDeleted: { type : Boolean, default : false }
     }]
 });
 
@@ -80,26 +82,7 @@ export default class UserModel {
                             promises.push(this.model.update({telegramId: u.telegramId}, {answers}));
                         }
                     });
-                    Promise.all(promises);
-                })
-        )
-    }
-    
-    removeSurvey(id) {
-        return (
-            this.model.select({})
-                .then(users => {
-                    const promises = [];
-                    users.forEach(u => {
-                        if (u.survey === id) {
-                            const answers = u.answers;
-                            answers.forEach(a => {
-                                a.isDeleted = true;
-                            });
-                            promises.push(this.model.update({telegramId: u.telegramId}, {answers}));
-                        }
-                    });
-                    Promise.all(promises);
+	                  return Promise.all(promises);
                 })
         )
     }
@@ -116,7 +99,7 @@ export default class UserModel {
                             promises.push(this.model.update({telegramId: u.telegramId}, {answers}));
                         }
                     });
-                    Promise.all(promises);
+                    return Promise.all(promises);
                 })
         )
     }
