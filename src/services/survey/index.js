@@ -23,6 +23,8 @@ export default class SurveyService extends Service {
         this.model = new SurveyModel();
         this.modelQuestion = new QuestionModel();
         this.modelUser = new UserModel();
+	    this.bot = new TelegramBot(token, {polling: true});
+	    console.log(this.bot);
     }
     
     /**
@@ -84,7 +86,6 @@ export default class SurveyService extends Service {
      * @return {Promise} promise
      */
     handleNoAnswers(req, res) {
-        this.bot = new TelegramBot(token, {polling: true});
         return (
             Promise.all([
                 this.model.getAll(),
@@ -149,7 +150,7 @@ export default class SurveyService extends Service {
                                     "parse_mode": "Markdown",
                                     "reply_markup": JSON.stringify(reply_markup)
                                 };
-    
+
                                 this.bot.sendMessage(user.chatId, nextQuestion.question, opts);
                             } else {
                                 const opts = {
