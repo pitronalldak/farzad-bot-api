@@ -92,7 +92,7 @@ export default class SurveyService extends Service {
                     for (let user of users) {
                         let unfinish = false;
                         for (let answer of user.answers) {
-                            if (!answer.answer) {
+                            if (!answer.answer && !answer.isDeleted) {
                                 unfinish = true
                             }
                         }
@@ -107,6 +107,7 @@ export default class SurveyService extends Service {
                             if (j === undefined) j = 0;
 
                             let user = unfinishedUsers[j];
+	                        user.answers = user.answers.filter(a => !a.isDeleted);
 	                        user.answers.sort((a, b) => {
 		                        return questions.find(q => q.id === a.questionId).index - questions.find(q => q.id === b.questionId).index
 	                        });

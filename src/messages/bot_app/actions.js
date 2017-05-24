@@ -5,17 +5,20 @@
 const mongoose = require('mongoose');
 const moment = require('moment');
 const { wrap: async } = require('co');
+const uuid = require('uuid/v4');
 
 import QuestionModel from '../../models/question';
 import UserModel from '../../models/user';
+import SurveyModel from '../../models/survey';
 
 let regeneratorRuntime =  require("regenerator-runtime");
 
 const Question = new QuestionModel();
-const User = UserModel;
+const User = new UserModel();
+const Survey = new SurveyModel();
 
 
-exports.createQuestion = async(function* (text, ownAnswer) {
+exports.createQuestion = async(function* (surveyId, text, ownAnswer, questionsQuantity) {
     const data = {};
     let preData = text.split('{');
     data.question = preData[0];
@@ -25,49 +28,102 @@ exports.createQuestion = async(function* (text, ownAnswer) {
     } else {
         preData = [];
     }
-    data.id = Math.random();
+    data.id = uuid.v4();
+	data.survey = surveyId;
     data.answers = [];
+	data.index = questionsQuantity + 1;
 
-    if (ownAnswer) data.ownAnswer = {text: ownAnswer, id: 0};
-    preData.forEach((a, key) => data.answers.push({id: key + 1, text: a}));
-    
-    this.getUsers()
-        .then((users) => {
-            for (let user of users) {
-                user.answers.push({"answer":"","questionId": data.id,"question": data.question});
-                user.save();
-            }
-        });
-
-    try {
-        Question.create(data);
-    } catch (err) {
-
-        const errors = Object.keys(err.errors)
-            .map(field => err.errors[field].message);
-
+    if (ownAnswer) {
+    	data.ownAnswer = {text: ownAnswer, id: 0};
     }
+    preData.forEach((a, key) => data.answers.push({id: key + 1, text: a}));
+	if (data.answers.length) {
+		if (data.ownAnswer) {
+			data.type = 'ownAndOptions';
+		} else {
+			data.type = 'options';
+		}
+	} else {
+		data.type = 'own';
+	}
+
+	return Question.create(data);
+});
+
+exports.createSurvey = async(function* (name, thankYou) {
+	const data = {};
+	data.id = uuid.v4();
+	data.name = name;
+	data.thankYou = thankYou;
+	return Survey.create(data);
+
+});
+
+exports.initializeAddedQuestionUserAnswers = async(function* (surveyId) {
+	Question.getAll()
+		.then(questions => {
+			this.getUsers()
+				.then(users => {
+					users.forEach(user => {
+						if (user.survey === surveyId) {
+							questions.forEach(q => {
+								if (!user.answers.some(answer => answer.questionId === q.id)) {
+									user.answers.push({"answer":"","questionId": q.id,"question": q.question});
+									return User.update({telegramId: user.telegramId}, user);
+								}
+							})
+						}
+					})
+				})
+		})
+});
+
+exports.initializeUserAnswers = async(function* (surveyId, telegramId) {
+	Question.getAll()
+		.then(questions => {
+			User.getUser({ telegramId })
+				.then((user) => {
+					let questionsFiltered = questions.filter(q => q.survey === surveyId);
+					user.answers = [];
+					user.survey = surveyId;
+					questionsFiltered.map(q => {
+						user.answers.push({"answer": "","questionId": q.id,"question": q.question});
+					});
+					return User.update({telegramId: user.telegramId}, user);
+				})
+		})
 });
 
 exports.getQuestions = async(function* () {
     return Question.getAll();
 });
 
+exports.getSurveys = async(function* () {
+	return Survey.getAll();
+});
+
 exports.getUsers = async(function* () {
     return User.getAll();
 });
 
-// exports.removeQuestions = async(function* () {
-//     return Question.remove();
-// });
+exports.removeSurvey = async(function* (name) {
+	this.getSurveys()
+		.then(surveys => {
+			const deletingSurveyId = surveys.find(survey => survey.name = name).id;
+			return Survey.remove(deletingSurveyId)
+		});
+});
 
-// exports.findTheQuestion = async(function* (question) {
-//     let q = question;
-//     return Question.getQuestionByName(q);
-// });
-
-// exports.removeTheQuestion = async(function* (question) {
-//     Question.removeQuestionByName(question);
+// exports.findAndDeleteTheQuestion = async(function* (question) {
+//     return Question.getQuestionByName(question)
+//         .then(thequestion => {
+//             if (thequestion) {
+//                 thequestion.isDeleted = true;
+//                 return thequestion.save();
+//             } else {
+//                 throw 'No such question!';
+//             }
+//         });
 // });
 
 exports.getUser = async(function* (telegramId) {
@@ -75,7 +131,7 @@ exports.getUser = async(function* (telegramId) {
 });
 
 exports.createUser = async(function* (data) {
-    Question.list()
+    Question.getAll()
         .then(questions => {
             const userData = {
                 date: moment().format('YYYY-MM-DDTHH:mm:ssZ'),
@@ -103,7 +159,7 @@ exports.createUser = async(function* (data) {
 
 exports.putAnswer = async(function* (telegramId, question, answer, answerId) {
 
-    User.getUser({telegramId: data.from.id})
+    User.getUser({telegramId: telegramId})
         .then(user => {
             user.answers.find(a => a.question === question).answer = answer;
             user.answers.find(a => a.question === question).answerId = answerId;

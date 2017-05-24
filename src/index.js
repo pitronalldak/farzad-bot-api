@@ -21,6 +21,7 @@ const port = process.env.PORT || 5000;
 
 require("./messages/bot_app/models");
 const action = require('./messages/bot_app/actions');
+const { postSpreadSheets } = require('./services/google-spreadsheets');
 
 const PASSWORD = 'Survey2017';
 
@@ -89,10 +90,10 @@ const TelegramBot = require('node-telegram-bot-api');
 // origin: 350720484:AAEgITsnyA0ZIFgQ46ivEq7Sp2VTrt4YDUg
 // dev: 329116244:AAHDzSnwr49C2PIe4OES2HJgrZTB0QLqc_w
 // v2 dev: 360889127:AAEPjHX8IDZ3jaG4x-ATVwFxSymVfQ2ENmk
-const token = '329116244:AAHDzSnwr49C2PIe4OES2HJgrZTB0QLqc_w';
+const token = '330486268:AAEEi7yURFX0EZQRE7EhylamB1-WaJi5ljg';
 
 // Create a bot that uses 'polling' to fetch new updates
-const bot = new TelegramBot(token, {polling: true});
+export const bot = new TelegramBot(token, {polling: true});
 
 //Show info on screen
 bot.onText(/info (.+)/, function (msg, match) {
@@ -139,6 +140,7 @@ bot.on('message', msg => {
                                         };
                                         let responseQuestion;
                                         let isNext = false;
+	                                    user.answers = user.answers.filter(a => a.isDeleted === false);
                                         for (let item of user.answers) {
                                             let nextQuestion = questions.find(q => q.id == item.questionId);
                                             if (!item.answer && item.question !== question && nextQuestion.isDeleted !== true) {
@@ -278,6 +280,7 @@ bot.on('callback_query', callbackQuery => {
                                     };
                                     let responseQuestion;
                                     let isNext = false;
+	                                user.answers = user.answers.filter(a => a.isDeleted === false);
                                     user.answers.sort((a, b) => {
                                         return questions.find(q => q.id === a.questionId).index - questions.find(q => q.id === b.questionId).index
                                     });
@@ -337,13 +340,15 @@ bot.onText(/start/, function (msg, match) {
                     const reply_markup = {
                         inline_keyboard: []
                     };
-                    if (surveys.length) {
+                    if (surveys.length && surveys.some(s => s.isActive)) {
                         surveys.forEach(survey => {
-                            reply_markup.inline_keyboard.push([{
-                                text: survey.name,
-                                callback_data: `true|${survey.id}|${survey.thankYou}`,
-                                resize_keyboard: true
-                            }]);
+                        	if (survey.isActive) {
+		                        reply_markup.inline_keyboard.push([{
+			                        text: survey.name,
+			                        callback_data: `true|${survey.id}|${survey.thankYou}`,
+			                        resize_keyboard: true
+		                        }]);
+	                        }
                         });
                         
                         const opts = {
@@ -424,7 +429,7 @@ bot.onText(/add_question: (.+)/, function (msg, match) {
                         if (password === PASSWORD) {
                             action.createQuestion(surveyId, question, ownAnswer, questionsQuantity)
                                 .then(() => {
-                                    action.initializeAddedQuestionUserAnswers(survey)
+                                    action.initializeAddedQuestionUserAnswers(surveyId)
                                         .then(() => {
                                             bot.sendMessage(chatId, `Question added!`);
                                         })
@@ -486,7 +491,7 @@ bot.onText(/send (.+)/, function (msg, match) {
                 for (let user of users) {
                     let unfinish = false;
                     for (let answer of user.answers) {
-                        if (!answer.answer) {
+                        if (!answer.answer && !answer.isDeleted) {
                             unfinish = true
                         }
                     }
@@ -503,8 +508,10 @@ bot.onText(/send (.+)/, function (msg, match) {
                                     const sendInterval = setInterval(function () {
                                         if (j === undefined) j = 0;
                                         let user = unfinishedUsers[j];
+	                                    user.answers = user.answers.filter(a => !a.isDeleted);
                                         user.answers.sort((a, b) => {
-                                            return questions.find(q => q.id === a.questionId).index - questions.find(q => q.id === b.questionId).index
+                                            return questions.find(q => q.id === a.questionId).index -
+	                                            questions.find(q => q.id === b.questionId).index
                                         });
                                         if (surveys.find((survey) => survey.id === user.survey)) {
                                             const thankYou = surveys.find((survey) => survey.id === user.survey).thankYou;
@@ -538,7 +545,9 @@ bot.onText(/send (.+)/, function (msg, match) {
                                                     "parse_mode": "Markdown",
                                                     "reply_markup": JSON.stringify(reply_markup)
                                                 };
-                                                
+                                                console.log(user.chatId);
+                                                console.log(nextQuestion.question);
+                                                console.log(opts);
                                                 bot.sendMessage(user.chatId, nextQuestion.question, opts);
                                             } else {
                                                 const opts = {

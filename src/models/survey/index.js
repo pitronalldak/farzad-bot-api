@@ -10,7 +10,7 @@ export const SurveySchema = new mongoose.Schema({
     id: { type: String, default: '' },
     name: { type : String, default : '' },
     thankYou: { type : String, default : '' },
-    isActive: { type : Boolean, default : true }
+    isActive: { type : Boolean, default : false }
 });
 
 
