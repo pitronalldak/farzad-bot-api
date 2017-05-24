@@ -6,7 +6,7 @@ const ObjectIdSchema = mongoose.Schema.ObjectId;
 const ObjectId = mongoose.Types.ObjectId;
 
 
-const SurveySchema = new mongoose.Schema({
+export const SurveySchema = new mongoose.Schema({
     id: { type: String, default: '' },
     name: { type : String, default : '' },
     thankYou: { type : String, default : '' },

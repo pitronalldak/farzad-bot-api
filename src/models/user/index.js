@@ -6,7 +6,7 @@ const ObjectIdSchema = mongoose.Schema.ObjectId;
 const ObjectId = mongoose.Types.ObjectId;
 
 
-const UserSchema = new mongoose.Schema({
+export const UserSchema = new mongoose.Schema({
     date: {type: String, default: ''},
 		survey: {type: String, default: ''},
     username: {type: String, default: ''},

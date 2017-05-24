@@ -5,7 +5,7 @@ import Model from '../model';
 const ObjectIdSchema = mongoose.Schema.ObjectId;
 const ObjectId = mongoose.Types.ObjectId;
 
-const QuestionSchema = new mongoose.Schema({
+export const QuestionSchema = new mongoose.Schema({
     id: { type: String, default: '' },
     index: { type: Number, default: '' },
     survey: { type : String },
