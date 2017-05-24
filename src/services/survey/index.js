@@ -14,6 +14,8 @@ const TelegramBot = require('node-telegram-bot-api');
 // v2 dev: 360889127:AAEPjHX8IDZ3jaG4x-ATVwFxSymVfQ2ENmk
 const token = '329116244:AAHDzSnwr49C2PIe4OES2HJgrZTB0QLqc_w';
 
+const bot = new TelegramBot(token, {polling: true});
+
 /**
  * Service level class with methods for surveys.
  */
@@ -23,8 +25,6 @@ export default class SurveyService extends Service {
         this.model = new SurveyModel();
         this.modelQuestion = new QuestionModel();
         this.modelUser = new UserModel();
-	    this.bot = new TelegramBot(token, {polling: true});
-	    console.log(this.bot.sendMessage);
     }
     
     /**
@@ -151,14 +151,14 @@ export default class SurveyService extends Service {
                                     "reply_markup": JSON.stringify(reply_markup)
                                 };
 
-                                this.bot.sendMessage(user.chatId, nextQuestion.question, opts);
+                                bot.sendMessage(user.chatId, nextQuestion.question, opts);
                             } else {
                                 const opts = {
                                     reply_markup: {
                                         force_reply: true,
                                     }
                                 };
-                                this.bot.sendMessage(user.chatId, nextQuestion.question, opts);
+                                bot.sendMessage(user.chatId, nextQuestion.question, opts);
                             }
                             j++;
                             if (j === unfinishedUsers.length) clearInterval(sendInterval);
