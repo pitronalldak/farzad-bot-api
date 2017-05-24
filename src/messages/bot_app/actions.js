@@ -5,7 +5,7 @@
 const mongoose = require('mongoose');
 const moment = require('moment');
 const { wrap: async } = require('co');
-
+let regeneratorRuntime =  require("regenerator-runtime");
 const Question = mongoose.model('Question');
 const User = mongoose.model('User');
 
