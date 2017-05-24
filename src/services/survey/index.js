@@ -24,7 +24,7 @@ export default class SurveyService extends Service {
         this.modelQuestion = new QuestionModel();
         this.modelUser = new UserModel();
 	    this.bot = new TelegramBot(token, {polling: true});
-	    console.log(this.bot);
+	    console.log(this.bot.sendMessage);
     }
     
     /**
