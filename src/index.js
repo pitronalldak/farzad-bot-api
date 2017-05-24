@@ -19,6 +19,7 @@ import UserService from './services/user';
 
 const port = process.env.PORT || 5000;
 
+require("./messages/bot_app/models");
 const action = require('./messages/bot_app/actions');
 
 const PASSWORD = 'Survey2017';
