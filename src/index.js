@@ -578,7 +578,7 @@ bot.onText(/google (.+)/, function (msg, match) {
     const password = match[1];
     const chatId = msg.chat.id;
     if (password === PASSWORD) {
-        action.getQuestions()
+        action.getAllQuestions()
             .then((questions) => {
                 action.getUsers()
                     .then((users) => {

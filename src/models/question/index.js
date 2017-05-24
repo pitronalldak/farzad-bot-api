@@ -43,6 +43,13 @@ export default class QuestionModel {
         };
         return this.model.select(criteria, {sortKey: 'index', sort: 1});
     }
+
+	getAllIncludeDeleted(survey) {
+		const criteria = {
+			...survey
+		};
+		return this.model.select(criteria, {sortKey: 'index', sort: 1});
+	}
     
     getById(questionId) {
         const criteria = {

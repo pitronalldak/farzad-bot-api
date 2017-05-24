@@ -98,6 +98,10 @@ exports.getQuestions = async(function* () {
     return Question.getAll();
 });
 
+exports.getAllQuestions = async(function* () {
+	return Question.getAllIncludeDeleted();
+});
+
 exports.getSurveys = async(function* () {
 	return Survey.getAll();
 });
