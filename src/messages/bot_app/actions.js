@@ -5,9 +5,14 @@
 const mongoose = require('mongoose');
 const moment = require('moment');
 const { wrap: async } = require('co');
+
+import QuestionModel from '../../models/question';
+import UserModel from '../../models/user';
+
 let regeneratorRuntime =  require("regenerator-runtime");
-const Question = mongoose.model('Question');
-const User = mongoose.model('User');
+
+const Question = new QuestionModel();
+const User = UserModel;
 
 
 exports.createQuestion = async(function* (text, ownAnswer) {
@@ -25,8 +30,7 @@ exports.createQuestion = async(function* (text, ownAnswer) {
 
     if (ownAnswer) data.ownAnswer = {text: ownAnswer, id: 0};
     preData.forEach((a, key) => data.answers.push({id: key + 1, text: a}));
-    const question = new Question(data);
-
+    
     this.getUsers()
         .then((users) => {
             for (let user of users) {
@@ -36,7 +40,7 @@ exports.createQuestion = async(function* (text, ownAnswer) {
         });
 
     try {
-        yield question.save();
+        Question.create(data);
     } catch (err) {
 
         const errors = Object.keys(err.errors)
@@ -46,28 +50,28 @@ exports.createQuestion = async(function* (text, ownAnswer) {
 });
 
 exports.getQuestions = async(function* () {
-    return Question.list();
+    return Question.getAll();
 });
 
 exports.getUsers = async(function* () {
-    return User.list();
+    return User.getAll();
 });
 
-exports.removeQuestions = async(function* () {
-    return Question.remove();
-});
+// exports.removeQuestions = async(function* () {
+//     return Question.remove();
+// });
 
-exports.findTheQuestion = async(function* (question) {
-    let q = question;
-    return Question.getQuestionByName(q);
-});
+// exports.findTheQuestion = async(function* (question) {
+//     let q = question;
+//     return Question.getQuestionByName(q);
+// });
 
-exports.removeTheQuestion = async(function* (question) {
-    Question.removeQuestionByName(question);
-});
+// exports.removeTheQuestion = async(function* (question) {
+//     Question.removeQuestionByName(question);
+// });
 
 exports.getUser = async(function* (telegramId) {
-    return User.getUserById(telegramId);
+    return User.getUser({telegramId: telegramId});
 });
 
 exports.createUser = async(function* (data) {
@@ -81,7 +85,7 @@ exports.createUser = async(function* (data) {
                 answers: []
             };
 
-            User.getUserById(data.from.id)
+            User.getUser({telegramId: data.from.id})
                 .then(user => {
                     if (user) {
                         user.answers = [];
@@ -91,8 +95,7 @@ exports.createUser = async(function* (data) {
                         return user.save();
                     } else {
                         questions.forEach(q => userData.answers.push({question: q.question, questionId: q.id}));
-                        const newUser = new User(userData);
-                        return newUser.save();
+                        return User.create(userData);
                     }
                 });
         })
@@ -100,10 +103,10 @@ exports.createUser = async(function* (data) {
 
 exports.putAnswer = async(function* (telegramId, question, answer, answerId) {
 
-    User.getUserById(telegramId)
+    User.getUser({telegramId: data.from.id})
         .then(user => {
             user.answers.find(a => a.question === question).answer = answer;
             user.answers.find(a => a.question === question).answerId = answerId;
-            return user.save();
+            return User.update({telegramId: user.telegramId}, user);
         });
 });

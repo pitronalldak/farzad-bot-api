@@ -43,7 +43,14 @@ export default class QuestionModel {
         };
         return this.model.select(criteria, {sortKey: 'index', sort: 1});
     }
-
+    
+    getById(questionId) {
+        const criteria = {
+            id: questionId
+        };
+        return this.model.select(criteria);
+    }
+    
     create(question) {
         return this.model.create(question);
     }

@@ -61,6 +61,14 @@ export default class UserModel {
         return this.modelBO.select(criteria, {limit: 1});
     }
     
+    create(user) {
+        return this.model.create(user);
+    }
+    
+    update(criteria, update) {
+        return this.model.update(criteria, update);
+    }
+    
     updateUserBO(criteria, update) {
         return this.modelBO.update(criteria, update);
     }
