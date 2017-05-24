@@ -1,1 +1,0 @@
-{"version":3,"sources":["../src/db.js"],"names":["module","exports","db","production"],"mappings":";;AAAAA,OAAOC,OAAP,GAAiB;AACfC,MAAI;AACFC,gBAAY;AADV;AADW,CAAjB","file":"db.js","sourcesContent":["module.exports = {\n  db: {\n    production: \"mongodb://user:pass@example.com:1234/stroeski-prod\"\n  }\n};"]}
