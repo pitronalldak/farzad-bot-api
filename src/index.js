@@ -21,7 +21,7 @@ const fs = require('fs');
 const https = require('https');
 // const privateKey  = fs.readFileSync('sslcert/server.key', 'utf8');
 // const certificate = fs.readFileSync('sslcert/server.crt', 'utf8');
-const credentials = {key: privateKey, cert: certificate};
+// const credentials = {key: privateKey, cert: certificate};
 
 const port = process.env.PORT || 5000;
 
@@ -34,7 +34,7 @@ const PASSWORD = 'Survey2017';
 let app = express();
 
 app.server = http.createServer(app);
-app.httpsServer = https.createServer(credentials, app);
+// app.httpsServer = https.createServer(credentials, app);
 
 const corsOptions = {
     origin: ['http://localhost:3000', 'https://survey-dashboard.herokuapp.com', 'http://174.138.52.48:3000', 'http://174.138.52.48'],
