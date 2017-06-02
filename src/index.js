@@ -17,6 +17,11 @@ import SurveyService from './services/survey';
 import QuestionService from './services/question';
 import UserService from './services/user';
 
+var https = require('https');
+var privateKey  = fs.readFileSync('sslcert/server.key', 'utf8');
+var certificate = fs.readFileSync('sslcert/server.crt', 'utf8');
+var credentials = {key: privateKey, cert: certificate};
+
 const port = process.env.PORT || 5000;
 
 require("./messages/bot_app/models");
@@ -28,6 +33,7 @@ const PASSWORD = 'Survey2017';
 let app = express();
 
 app.server = http.createServer(app);
+app.httpsServer = https.createServer(credentials, app);
 
 const corsOptions = {
     origin: ['http://localhost:3000', 'https://survey-dashboard.herokuapp.com', 'http://174.138.52.48:3000', 'http://174.138.52.48'],
