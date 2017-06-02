@@ -17,10 +17,11 @@ import SurveyService from './services/survey';
 import QuestionService from './services/question';
 import UserService from './services/user';
 
-var https = require('https');
-var privateKey  = fs.readFileSync('sslcert/server.key', 'utf8');
-var certificate = fs.readFileSync('sslcert/server.crt', 'utf8');
-var credentials = {key: privateKey, cert: certificate};
+const fs = require('fs');
+const https = require('https');
+const privateKey  = fs.readFileSync('sslcert/server.key', 'utf8');
+const certificate = fs.readFileSync('sslcert/server.crt', 'utf8');
+const credentials = {key: privateKey, cert: certificate};
 
 const port = process.env.PORT || 5000;
 
