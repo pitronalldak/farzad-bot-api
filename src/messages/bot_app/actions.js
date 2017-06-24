@@ -168,5 +168,5 @@ exports.putAnswer = async(function* (telegramId, question, answer, answerId) {
             user.answers.find(a => a.question === question).answer = answer;
             user.answers.find(a => a.question === question).answerId = answerId;
             return User.update({telegramId: user.telegramId}, user);
-        });
+        })
 });
