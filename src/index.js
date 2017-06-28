@@ -27,6 +27,8 @@ const port = process.env.PORT || 5000;
 
 require("./telegram");
 
+require("./facebook");
+
 require("./messages/bot_app/models");
 
 const PASSWORD = 'Survey2017';
@@ -77,7 +79,7 @@ connect()
 function connect() {
     const options = {server: {socketOptions: {keepAlive: 1}}};
     return mongoose.connect('mongodb://bot:Matwey12@ds145019.mlab.com:45019/heroku_zlrrx207').connection;
-    // return mongoose.connect('mongodb://bot:bot@127.0.0.1:27017/bot').connection;
+    //return mongoose.connect('mongodb://bot:bot@127.0.0.1:27017/bot').connection;
 }
 
 function listen() {
@@ -91,3 +93,14 @@ new QuestionApi(app, new QuestionService()).register();
 new UserApi(app, new UserService()).register();
 
 export default app;
+
+import {bot} from './facebook'
+
+app.get('/facebook', (req, res) => {
+  return bot._verify(req, res)
+})
+
+app.post('/facebook', (req, res) => {
+  bot._handleMessage(req.body)
+  res.end(JSON.stringify({status: 'ok'}))
+})
