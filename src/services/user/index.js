@@ -1,5 +1,4 @@
 const uuidV4 = require('uuid/v4');
-import getHash from './pass';
 import Service from '../service';
 import UserModel from '../../models/user';
 

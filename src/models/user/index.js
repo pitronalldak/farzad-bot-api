@@ -12,13 +12,7 @@ export const UserSchema = new mongoose.Schema({
     username: {type: String, default: ''},
     telegramId: {type: String, default: ''},
     chatId: {type: String, default: ''},
-    answers: [{
-        answerId: {type: String, default: ''},
-        question: {type: String, default: ''},
-        questionId: {type: String, default: ''},
-        answer: {type: String, default: ''},
-	    isDeleted: { type : Boolean, default : false }
-    }]
+    answers: [{answer: {type: String}}]
 });
 
 const UserBOSchema = new mongoose.Schema({
