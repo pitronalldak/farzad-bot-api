@@ -53,6 +53,7 @@ bot.on('message', msg => {
     const question = msg.reply_to_message.text;
     const answer = msg.text;
     const id = uuid.v4();
+  
     modelQuestion.getAll()
       .then((questions) => {
         const questionId = questions.find(a => a.question === question).id;
@@ -73,38 +74,40 @@ bot.on('message', msg => {
                         inline_keyboard: []
                       }
                     };
-                    
-                    let nextQuestion = questions.find(q => !user.answers.some(a => a.question == q.id));
-                    
-                    if (nextQuestion) {
-                      if (responseQuestion.answers.length) {
-                        responseQuestion.answers.forEach(answer => {
-                          opts.reply_markup.inline_keyboard.push([{
-                            text: answer.text,
-                            callback_data: `false|${thankYou}|${nextQuestion.id}|${answer.id}`,
-                            resize_keyboard: true
-                          }])
-                        });
-                        if (responseQuestion.ownAnswer.text) {
-                          opts.reply_markup.inline_keyboard.push([{
-                            text: responseQuestion.ownAnswer.text,
-                            callback_data: `false|${thankYou}|${nextQuestion.id}|${nextQuestion.ownAnswer.id}|true`
-                          }]);
-                        }
-                        bot.sendMessage(chatId, nextQuestion.question, opts);
-                      }
-                      else {
-                        const opts = {
-                          reply_markup: {
-                            force_reply: true,
-                            
+                    modelAnswer.getByUser(telegramId)
+                      .then(answers => {
+                        let nextQuestion = questions.find(q => !answers.some(a => a.question == q.id));
+                        if (nextQuestion) {
+                          if (nextQuestion.answers.length) {
+                            nextQuestion.answers.forEach(answer => {
+                              opts.reply_markup.inline_keyboard.push([{
+                                text: answer.text,
+                                callback_data: `false|${thankYou}|${nextQuestion.id}|${answer.id}`,
+                                resize_keyboard: true
+                              }])
+                            });
+                            if (nextQuestion.ownAnswer.text) {
+                              opts.reply_markup.inline_keyboard.push([{
+                                text: nextQuestion.ownAnswer.text,
+                                callback_data: `false|${thankYou}|${nextQuestion.id}|${nextQuestion.ownAnswer.id}|true`
+                              }]);
+                            }
+                            bot.sendMessage(chatId, nextQuestion.question, opts);
                           }
-                        };
-                        bot.sendMessage(chatId, nextQuestion.question, opts)
-                      }
-                    } else {
-                      bot.sendMessage(chatId, thankYou);
-                    }
+                          else {
+                            console.log(nextQuestion.question)
+                            const opts = {
+                              reply_markup: {
+                                force_reply: true,
+                                
+                              }
+                            };
+                            bot.sendMessage(chatId, nextQuestion.question, opts)
+                          }
+                        } else {
+                          bot.sendMessage(chatId, thankYou);
+                        }
+                      })
                   })
               })
       })
@@ -141,12 +144,10 @@ bot.on('callback_query', callbackQuery => {
             modelQuestion.getAll()
               .then(questions => {
                 let questionsFiltered = questions.filter(q => q.survey === surveyId);
-                user.answers = [];
-                user.survey = surveyId;
-                questionsFiltered.map(q => {
-                  user.answers.push({"answer": "","questionId": q.id,"question": q.question});
+                const answer = {text: ''};
+                questionsFiltered.forEach(q => {
+                  modelAnswer.update({user: user.telegramId, question: q.id}, answer);
                 });
-                return modelUser.update({telegramId: user.telegramId}, user);
               })
               .then(() => {
                 questionsFiltered = questions.filter(q => q.survey === surveyId);
@@ -165,6 +166,7 @@ bot.on('callback_query', callbackQuery => {
                   }
                 }
                 if (questionExist) {
+                  
                   if (responseQuestion.answers.length) {
                     responseQuestion.answers.forEach(answer => {
                       opts.reply_markup.inline_keyboard.push([{
@@ -182,12 +184,15 @@ bot.on('callback_query', callbackQuery => {
                     }
                     bot.sendMessage(chatId, responseQuestion.question, opts);
                   } else {
+                    
                     const opts = {
                       reply_markup: {
                         force_reply: true,
                         
                       }
                     };
+                    console.log(responseQuestion.question)
+                    console.log(opts)
                     bot.sendMessage(chatId, responseQuestion.question, opts)
                   }
                 } else {
@@ -219,52 +224,41 @@ bot.on('callback_query', callbackQuery => {
                     inline_keyboard: []
                   }
                 };
-                // let responseQuestion;
-                // let isNext = false;
-                // user.answers = user.answers.filter(a => a.isDeleted === false);
-                // user.answers.sort((a, b) => {
-                //   return questions.find(q => q.id === a.questionId).index - questions.find(q => q.id === b.questionId).index
-                // });
-                // for (let item of user.answers) {
-                //   let nextQuestion = questions.find(q => q.id == item.questionId);
-                //   if (!item.answer && item.question !== question && nextQuestion.isDeleted !== true) {
-                //     responseQuestion = nextQuestion;
-                //     isNext = true;
-                //     break
-                //   }
-                // }
-                let nextQuestion = questions.find(q => !user.answers.some(a => a.question == q.id));
-                
-                if (nextQuestion) {
-                  if (nextQuestion.answers.length) {
-                    nextQuestion.answers.forEach(answer => {
-                      opts.reply_markup.inline_keyboard.push([{
-                        text: answer.text,
-                        callback_data: `false|${thankYou}|${nextQuestion.id}|${answer.id}`,
-                        resize_keyboard: true
-                      }])
-                    });
-                    if (responseQuestion.ownAnswer.text) {
-                      opts.reply_markup.inline_keyboard.push([{
-                        text: responseQuestion.ownAnswer.text,
-                        callback_data: `false|${thankYou}|${nextQuestion.id}|${nextQuestion.ownAnswer.id}|true`,
-                        resize_keyboard: true
-                      }]);
-                    }
-                    bot.sendMessage(chatId, nextQuestion.question, opts);
-                  }
-                  else {
-                    const opts = {
-                      reply_markup: {
-                        force_reply: true,
-                        
+          
+                modelAnswer.getByUser(telegramId)
+                  .then(answers => {
+                    let nextQuestion = questions.find(q => !answers.some(a => a.question == q.id));
+                    if (nextQuestion) {
+                      if (nextQuestion.answers.length) {
+                        nextQuestion.answers.forEach(answer => {
+                          opts.reply_markup.inline_keyboard.push([{
+                            text: answer.text,
+                            callback_data: `false|${thankYou}|${nextQuestion.id}|${answer.id}`,
+                            resize_keyboard: true
+                          }])
+                        });
+                        if (nextQuestion.ownAnswer.text) {
+                          opts.reply_markup.inline_keyboard.push([{
+                            text: nextQuestion.ownAnswer.text,
+                            callback_data: `false|${thankYou}|${nextQuestion.id}|${nextQuestion.ownAnswer.id}|true`,
+                            resize_keyboard: true
+                          }]);
+                        }
+                        bot.sendMessage(chatId, nextQuestion.question, opts);
                       }
-                    };
-                    bot.sendMessage(chatId, nextQuestion.question, opts)
-                  }
-                } else {
-                  bot.sendMessage(chatId, thankYou);
-                }
+                      else {
+                        const opts = {
+                          reply_markup: {
+                            force_reply: true,
+          
+                          }
+                        };
+                        bot.sendMessage(chatId, nextQuestion.question, opts)
+                      }
+                    } else {
+                      bot.sendMessage(chatId, thankYou);
+                    }
+                  })
               })
               
             }

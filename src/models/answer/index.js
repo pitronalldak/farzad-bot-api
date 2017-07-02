@@ -33,4 +33,15 @@ export default class AnswerModel {
   create(answer) {
     return this.model.create(answer);
   }
+  
+  getByUser(userId) {
+    const criteria = {
+      user: userId
+    };
+    return this.model.select(criteria);
+  }
+  
+  update(criteria, update) {
+    return this.model.update(criteria, update);
+  }
 }
