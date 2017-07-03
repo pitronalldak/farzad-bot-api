@@ -50,6 +50,8 @@
     "google-auth-library": "^0.10.0",
     "googleapis": "^19.0.0",
     "https": "^1.0.0",
+    "memory-cache": "^0.2.0",
+    "messenger-bot": "^2.4.0",
     "moment": "^2.18.1",
     "mongoose": "^4.9.8",
     "node-telegram-bot-api": "^0.27.1",
@@ -61,8 +63,7 @@
     "reflect-metadata": "^0.1.9",
     "resource-router-middleware": "^0.5.1",
     "typeorm": "0.0.6",
-    "uuid": "^3.0.1",
-    "messenger-bot": "^2.4.0"
+    "uuid": "^3.0.1"
   },
   "devDependencies": {
     "babel-cli": "^6.9.0",
