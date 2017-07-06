@@ -141,6 +141,8 @@ bot.on('callback_query', callbackQuery => {
         .then((user) => {
           let questionsFiltered;
           if (isFirst  === 'true') {
+            const survey = { survey : surveyId };
+            modelUser.update({telegramId: telegramId}, survey);
             modelQuestion.getAll()
               .then(questions => {
                 let questionsFiltered = questions.filter(q => q.survey === surveyId);
