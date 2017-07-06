@@ -10,7 +10,8 @@ export const SurveySchema = new mongoose.Schema({
     id: { type: String, default: '' },
     name: { type : String, default : '' },
     thankYou: { type : String, default : '' },
-    isActive: { type : Boolean, default : false }
+    isActiveTelegram: { type : Boolean, default : false },
+    isActiveFacebook: { type : Boolean, default : false }
 });
 
 
@@ -51,10 +52,16 @@ export default class SurveyModel {
         const criteria = {id};
         return this.model.remove(criteria);
     }
-    
-    activate(data) {
+  
+    activateFacebook(data) {
         const criteria = {id: data.id};
-        const update = {isActive: data.isActive};
+        const update = {isActiveFacebook: data.isActiveFacebook};
+        return this.model.update(criteria, update);
+    }
+  
+    activateTelegram(data) {
+        const criteria = {id: data.id};
+        const update = {isActiveTelegram: data.isActiveTelegram};
         return this.model.update(criteria, update);
     }
     

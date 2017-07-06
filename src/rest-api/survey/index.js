@@ -17,6 +17,7 @@ export default class SurveyApi {
         this.app.post('/surveys/create', (req, res) => this.service.create(req, res));
         this.app.put('/surveys/update', (req, res) => this.service.update(req, res));
         this.app.post('/surveys/remove', (req, res) => this.service.remove(req, res));
-        this.app.put('/surveys/activate', (req, res) => this.service.activate(req, res));
+        this.app.put('/surveys/activate-facebook', (req, res) => this.service.activateFacebook(req, res));
+        this.app.put('/surveys/activate-telegram', (req, res) => this.service.activateTelegram(req, res));
     }
 }

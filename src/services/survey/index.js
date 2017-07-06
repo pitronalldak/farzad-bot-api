@@ -226,16 +226,16 @@ export default class SurveyService extends Service {
     };
     
     /**
-     * Method for activate survey .
+     * Method for activate telegram survey.
      *
      * @param {String} req request from client
      * @param {String} res response to client
      * @return {Promise} promise
      */
-    activate(req, res) {
+    activateTelegram(req, res) {
         
         return (
-            this.model.activate(req.body)
+            this.model.activateTelegram(req.body)
                 .then(() => {
                     res.status(200).send(JSON.stringify({msg: "Survey status changed"}));
                 })
@@ -243,4 +243,23 @@ export default class SurveyService extends Service {
                     res.status(400).send(JSON.stringify({err: error.message || error}));
                 }))
     };
+  
+  /**
+   * Method for activate facebook survey.
+   *
+   * @param {String} req request from client
+   * @param {String} res response to client
+   * @return {Promise} promise
+   */
+  activateFacebook(req, res) {
+    
+    return (
+      this.model.activateFacebook(req.body)
+        .then(() => {
+          res.status(200).send(JSON.stringify({msg: "Survey status changed"}));
+        })
+        .catch(error => {
+          res.status(400).send(JSON.stringify({err: error.message || error}));
+        }))
+  };
 }

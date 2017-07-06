@@ -278,7 +278,7 @@ bot.onText(/start/, function (msg, match) {
         chatId: msg.chat.id,
         answers: []
       };
-  
+  //check method after refactoring
       modelUser.getUser({telegramId: msg.from.id})
         .then(user => {
           if (user) {
