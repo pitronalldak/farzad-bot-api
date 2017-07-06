@@ -58,7 +58,7 @@ bot.on('message', msg => {
       .then((questions) => {
         const questionId = questions.find(a => a.question === question).id;
         modelAnswer.create({
-          id,
+          id : id,
           question: questionId,
           user: telegramId,
           text: answer
@@ -76,7 +76,7 @@ bot.on('message', msg => {
                     };
                     modelAnswer.getByUser(telegramId)
                       .then(answers => {
-                        let nextQuestion = questions.find(q => !answers.some(a => a.question == q.id));
+                        let nextQuestion = questions.find(q => !answers.some(a => a.question == q.id) && user.survey === q.survey);
                         if (nextQuestion) {
                           if (nextQuestion.answers.length) {
                             nextQuestion.answers.forEach(answer => {
@@ -146,9 +146,8 @@ bot.on('callback_query', callbackQuery => {
             modelQuestion.getAll()
               .then(questions => {
                 let questionsFiltered = questions.filter(q => q.survey === surveyId);
-                const answer = {text: ''};
                 questionsFiltered.forEach(q => {
-                  modelAnswer.update({user: user.telegramId, question: q.id}, answer);
+                  modelAnswer.remove({question : q.id, user : user.telegramId})
                 });
               })
               .then(() => {
@@ -215,7 +214,7 @@ bot.on('callback_query', callbackQuery => {
                 .find(a => a.id == answerId).text;
               const id = uuid.v4();
               modelAnswer.create({
-                id,
+                id : id,
                 question: questionId,
                 user: user.telegramId,
                 text: answer
@@ -229,7 +228,7 @@ bot.on('callback_query', callbackQuery => {
           
                 modelAnswer.getByUser(telegramId)
                   .then(answers => {
-                    let nextQuestion = questions.find(q => !answers.some(a => a.question == q.id));
+                    let nextQuestion = questions.find(q => !answers.some(a => a.question == q.id) && user.survey === q.survey);
                     if (nextQuestion) {
                       if (nextQuestion.answers.length) {
                         nextQuestion.answers.forEach(answer => {
@@ -284,13 +283,18 @@ bot.onText(/start/, function (msg, match) {
       modelUser.getUser({telegramId: msg.from.id})
         .then(user => {
           if (user) {
-            user.answers = [];
-            user.date = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-            questions.forEach(q => user.answers.push({question: q.question, questionId: q.id}));
-            user.chatId = userData.chatId;
+            const update = {answers : [], date : moment().format('YYYY-MM-DDTHH:mm:ssZ'), survey : ''}
+            modelUser.update({telegramId : msg.from.id}, update);
+            //remove all users answers
+            /*modelAnswer.getByUser(msg.from.id)
+              .then(answers => {
+                answers.forEach(answer => {
+                  modelAnswer.remove({id : answer.id})
+                })
+              })*/
+
             return user.save();
           } else {
-            questions.forEach(q => userData.answers.push({question: q.question, questionId: q.id}));
             return modelUser.create(userData);
           }
         });
@@ -302,9 +306,9 @@ bot.onText(/start/, function (msg, match) {
           const reply_markup = {
             inline_keyboard: []
           };
-          if (surveys.length && surveys.some(s => s.isActive)) {
+          if (surveys.length && surveys.some(s => s.isActiveTelegram)) {
             surveys.forEach(survey => {
-              if (survey.isActive) {
+              if (survey.isActiveTelegram) {
                 reply_markup.inline_keyboard.push([{
                   text: survey.name,
                   callback_data: `true|${survey.id}|${survey.thankYou}`,
