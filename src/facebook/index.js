@@ -37,7 +37,6 @@ bot.on('error', (err) => {
 
 bot.on('message', (payload, reply) => {
   const text = payload.message.text
-  console.log(text)
   const facebookId = payload.sender.id
   const questionId = cache.get(facebookId)
   if (questionId){
@@ -98,7 +97,6 @@ bot.on('message', (payload, reply) => {
 
                           }
                           else {
-                            console.log(nextQuestion.question)
                             elements.push({ 
                               title : nextQuestion.question,
                               buttons : [{
@@ -107,7 +105,7 @@ bot.on('message', (payload, reply) => {
                               payload: `false|${thankYou}|${nextQuestion.id}|${nextQuestion.ownAnswer.id}|true`
                               }]});
                           }
-                          //console.log(elements);
+
                           const messageData = {
                                 "attachment": {
                                   "type": "template",
@@ -133,6 +131,7 @@ bot.on('message', (payload, reply) => {
 
   } else {
     if (text === 'start'){
+      cache.put(facebookId, false)
       bot.getProfile(payload.sender.id, (err, profile) => {
         cache.put(payload.sender.id, false)
         if (err) throw err
@@ -142,7 +141,7 @@ bot.on('message', (payload, reply) => {
               date: moment().format('YYYY-MM-DDTHH:mm:ssZ'),
               username: `${profile.first_name} ${profile.last_name}`,
               telegramId: facebookId,
-              chatId: facebookId,
+              chatId: '',
               answers: []
             };
             modelUser.getUser({telegramId: facebookId})
@@ -256,11 +255,17 @@ bot.on('postback', (payload, reply, actions) => {
             user.save();
             modelQuestion.getAll()
               .then(questions => {
-                let questionsFiltered = questions.filter(q => q.survey === surveyId);
-                questionsFiltered.forEach(q => {
-                  modelAnswer.remove({question : q.id, user : user.telegramId})
-                });
-              })
+                modelAnswer.getByUser(facebookId)
+                .then(answers => {
+                  let questionsFiltered = questions.filter(q => q.survey === surveyId);
+
+                  answers.forEach(answer => {
+                    if(questionsFiltered.find(q => answer.question === q.id)){
+                      modelAnswer.remove({id : answer.id});
+                    }
+                  });
+                })
+            })
               .then(() => {
                 questionsFiltered = questions.filter(q => q.survey === surveyId);
                 const elements = [];
@@ -288,7 +293,7 @@ bot.on('postback', (payload, reply, actions) => {
                           payload: `false|${thankYou}|${responseQuestion.id}|${answer.id}`
                       })
                     });
-                    //title : responseQuestion.question,
+
                     if (responseQuestion.ownAnswer.text) {
                       counter++;
                       buttons.push({

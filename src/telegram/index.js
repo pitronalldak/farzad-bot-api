@@ -95,7 +95,7 @@ bot.on('message', msg => {
                             bot.sendMessage(chatId, nextQuestion.question, opts);
                           }
                           else {
-                            console.log(nextQuestion.question)
+
                             const opts = {
                               reply_markup: {
                                 force_reply: true,
@@ -145,10 +145,15 @@ bot.on('callback_query', callbackQuery => {
             modelUser.update({telegramId: telegramId}, survey);
             modelQuestion.getAll()
               .then(questions => {
-                let questionsFiltered = questions.filter(q => q.survey === surveyId);
-                questionsFiltered.forEach(q => {
-                  modelAnswer.remove({question : q.id, user : user.telegramId})
-                });
+                modelAnswer.getByUser(telegramId)
+                .then(answers => {
+                  let questionsFiltered = questions.filter(q => q.survey === surveyId);
+                  answers.forEach(answer => {
+                    if(questionsFiltered.find(q => answer.question === q.id)){
+                      modelAnswer.remove({id : answer.id});
+                    }
+                  });
+                })
               })
               .then(() => {
                 questionsFiltered = questions.filter(q => q.survey === surveyId);
@@ -192,8 +197,6 @@ bot.on('callback_query', callbackQuery => {
                         
                       }
                     };
-                    console.log(responseQuestion.question)
-                    console.log(opts)
                     bot.sendMessage(chatId, responseQuestion.question, opts)
                   }
                 } else {
