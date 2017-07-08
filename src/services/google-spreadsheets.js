@@ -7,7 +7,7 @@ const moment = require('moment');
 // origin: 1LOUGqVKIm-crpOjIgTPUY7QlY6ubaSyclRZjqsGUx2U
 // dev: 1TAidjIed5goBfdtIk81L955tSx-zyChioCHT2VzkdBg
 // v2 dev: 1-ZFmyF-Iz7wyzdMLGEI9IjBbxL9l_FSFG8ogqWLVJc8
-const spreadsheet = '1TAidjIed5goBfdtIk81L955tSx-zyChioCHT2VzkdBg';
+const spreadsheet = '15xQEWvKK88W4eALxThmtHIzsdPXFqfYHir8QvjH8Jq0';
 
 // If modifying these scopes, delete your previously saved credentials
 // at ~/.credentials/sheets.googleapis.com-nodejs-quickstart.json
@@ -129,10 +129,14 @@ function writeDataToSheets(auth, sheets, users, questions, survey, answers, call
 	let columns = [];
 	let userQuantity = 0;
 	let questionQuantity = 0;
-	for (let user of users) {
-		user.answers = answers.filter(a => a.isDeleted === false && a.user === user.telegramId);
-		user.answers.sort((a, b) => {
-			return questions.find(q => q.id === a.questionId).index - questions.find(q => q.id === b.questionId).index
+  
+  for (let user of users) {
+  	console.log(answers)
+		user.newAnswers = answers.filter(a => a.isDeleted === false && a.user === user.telegramId);
+    console.log(user.newAnswers)
+  
+    user.newAnswers.sort((a, b) => {
+			return questions.find(q => q.id === a.question).index - questions.find(q => q.id === b.question).index
 		});
 		if (user.survey === survey.id) {
 			userQuantity++;
@@ -152,12 +156,16 @@ function writeDataToSheets(auth, sheets, users, questions, survey, answers, call
 					stringValue: user.username,
 				}
 			});
-			for (let answer of user.answers) {
-				let answ = '';
-				if (answer.answerId) {answ = answer.answerId} else {answ = answer.answer}
+			for (let answer of user.newAnswers) {
+				// let answ = '';
+				// if (answer.answerId) {
+				// 	answ = answer.answerId;
+				// } else {
+				// 	answ = answer.answer;
+				// }
 				juser.push({
 					userEnteredValue: {
-						stringValue: answ,
+						stringValue: answer.text,
 					}
 				});
 			}

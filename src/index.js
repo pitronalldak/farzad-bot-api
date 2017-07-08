@@ -94,13 +94,13 @@ new UserApi(app, new UserService()).register();
 
 export default app;
 
-import {bot} from './facebook'
+import {botFacebook} from './facebook'
 
 app.get('/facebook', (req, res) => {
-  return bot._verify(req, res)
+  return botFacebook._verify(req, res)
 })
 
 app.post('/facebook', (req, res) => {
-  bot._handleMessage(req.body)
+  botFacebook._handleMessage(req.body)
   res.end(JSON.stringify({status: 'ok'}))
 })

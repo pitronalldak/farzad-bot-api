@@ -189,7 +189,7 @@ export default class SurveyService extends Service {
                       }
                   }
   
-                  botFacebook.sendMessage(+user.telegramId, messageData, (err, info) => {
+                  botFacebook.sendMessage(user.telegramId, messageData, (err, info) => {
                       if(err) console.log(err)
                     })
                 }
