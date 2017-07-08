@@ -2,247 +2,219 @@ import Service from '../service';
 import SurveyModel from '../../models/survey';
 import QuestionModel from '../../models/question';
 import UserModel from '../../models/user';
-import { bot } from '../../index';
+import AnswerModel from '../../models/answer';
+import {bot} from '../../index';
 
 const uuidV4 = require('uuid/v4');
-const { postSpreadSheets } = require('../google-spreadsheets');
+const {postSpreadSheets} = require('../google-spreadsheets');
 
 /**
  * Service level class with methods for surveys.
  */
 export default class SurveyService extends Service {
-    constructor() {
-        super();
-        this.model = new SurveyModel();
-        this.modelQuestion = new QuestionModel();
-        this.modelUser = new UserModel();
-    }
+  constructor() {
+    super();
+    this.model = new SurveyModel();
+    this.modelQuestion = new QuestionModel();
+    this.modelUser = new UserModel();
+    this.modelAnswer = new AnswerModel();
+  }
+  
+  /**
+   * Method for request all surveys.
+   *
+   * @param {String} req request from client
+   * @param {String} res response to client
+   * @return {Promise} promise
+   */
+  getAll(req, res) {
     
-    /**
-     * Method for request all surveys.
-     *
-     * @param {String} req request from client
-     * @param {String} res response to client
-     * @return {Promise} promise
-     */
-    getAll(req, res) {
-        
-        return (
-            this.model.getAll()
-                .then(data => {
-                    res.json({data});
-                })
-                .catch(error => {
-                    res.status(400).send(JSON.stringify({err: error.message || error}));
-                }))
-    };
+    return (
+      this.model.getAll()
+        .then(data => {
+          res.json({data});
+        })
+        .catch(error => {
+          res.status(400).send(JSON.stringify({err: error.message || error}));
+        }))
+  };
+  
+  /**
+   * Method for handle google loading.
+   *
+   * @param {String} req request from client
+   * @param {String} res response to client
+   * @return {Promise} promise
+   */
+  handleGoogle(req, res) {
     
-     /**
-     * Method for handle google loading.
-     *
-     * @param {String} req request from client
-     * @param {String} res response to client
-     * @return {Promise} promise
-     */
-     handleGoogle(req, res) {
-        
-        return (
-            Promise.all([
-                this.model.getAll(),
-                this.modelQuestion.getAll(),
-                this.modelUser.getAll()
-                ])
-                 .then(response => {
-                     const surveys = response[0];
-                     const questions = response[1];
-                     const users = response[2];
-                     try {
-                         postSpreadSheets(questions, users, surveys, () => {
-                         	res.status(200).send(JSON.stringify({msg: "Migration complete"}))
-                         });
-                     } catch (e) {
-                         console.log(e);
-                     }
-                 })
-                .catch(error => {
-                    res.status(400).send(JSON.stringify({err: error.message || error}));
-                }))
-    };
-    
-    /**
-     * Method for handle unsended questions.
-     *
-     * @param {String} req request from client
-     * @param {String} res response to client
-     * @return {Promise} promise
-     */
-    handleNoAnswers(req, res) {
-        return (
-            Promise.all([
-                this.model.getAll(),
-                this.modelQuestion.getAll(),
-                this.modelUser.getAll()
-            ])
-                .then(response => {
-                    const surveys = response[0];
-                    const questions = response[1];
-                    const users = response[2];
-    
-                    let unfinishedUsers = [];
-                    for (let user of users) {
-                        let unfinish = false;
-                        for (let answer of user.answers) {
-                            if (!answer.answer && !answer.isDeleted) {
-                                unfinish = true
-                            }
-                        }
-                        if (unfinish) {
-                            unfinishedUsers.push(user);
-                        }
+    return (
+      Promise.all([
+        this.model.getAll(),
+        this.modelQuestion.getAll(),
+        this.modelUser.getAll(),
+        this.modelAnswer.getAll()
+      ])
+        .then(response => {
+          const surveys = response[0];
+          const questions = response[1];
+          const users = response[2];
+          const answers = response[3];
+          try {
+            postSpreadSheets(questions, users, surveys, answers, () => {
+              res.status(200).send(JSON.stringify({msg: "Migration complete"}))
+            });
+          } catch (e) {
+            console.log(e);
+          }
+        })
+        .catch(error => {
+          res.status(400).send(JSON.stringify({err: error.message || error}));
+        }))
+  };
+  
+  /**
+   * Method for handle unsended questions.
+   *
+   * @param {String} req request from client
+   * @param {String} res response to client
+   * @return {Promise} promise
+   */
+  handleNoAnswers(req, res) {
+    return (
+      this.modelUser.getAllWithSurvey()
+      .then(users => {
+        let isUnAnswers = false;
+        users.forEach(user => {
+          Promise.all([
+            this.modelQuestion.getAll({survey: user.survey}),
+            this.modelAnswer.getByUser(user.id)
+          ])
+            .then(response => {
+              const questions = response[0];
+              const answers = response[1];
+              let nextQuestion = questions.find(q => !answers.some(a => a.question == q.id));
+  
+              if (nextQuestion) {
+                isUnAnswers = true;
+                if (nextQuestion.answers.length) {
+                  nextQuestion.answers.forEach(answer => {
+                    opts.reply_markup.inline_keyboard.push([{
+                      text: answer.text,
+                      callback_data: `false|${thankYou}|${nextQuestion.id}|${answer.id}`,
+                      resize_keyboard: true
+                    }])
+                  });
+                  if (nextQuestion.ownAnswer.text) {
+                    opts.reply_markup.inline_keyboard.push([{
+                      text: nextQuestion.ownAnswer.text,
+                      callback_data: `false|${thankYou}|${nextQuestion.id}|${nextQuestion.ownAnswer.id}|true`
+                    }]);
+                  }
+                  bot.sendMessage(chatId, nextQuestion.question, opts);
+                }
+                else {
+                  console.log(nextQuestion.question)
+                  const opts = {
+                    reply_markup: {
+                      force_reply: true,
+          
                     }
-                    if (unfinishedUsers.length) {
-                        
-                        let j;
-                        const sendInterval = setInterval(function () {
-                            if (j === undefined) j = 0;
-
-                            let user = unfinishedUsers[j];
-	                        user.answers = user.answers.filter(a => !a.isDeleted);
-	                        user.answers.sort((a, b) => {
-		                        return questions.find(q => q.id === a.questionId).index - questions.find(q => q.id === b.questionId).index
-	                        });
-                            const thankYou = surveys.find((survey) => survey.id === user.survey).thankYou;
-                            let filter_answers = user.answers.filter(answer => !answer.answer);
-                            let i = 0;
-                            for (i; i < filter_answers.length; i++) {
-                                let questionitself = questions.find(question => question.id === filter_answers[i].questionId);
-                                if (questionitself.isDeleted !== true) break
-                            }
-                            let qid = filter_answers[i].questionId;
-                            const reply_markup = {
-                                inline_keyboard: []
-                            };
-                            let nextQuestion = (questions.find(question => question.id === qid));
-                            if (nextQuestion.answers.length) {
-                                nextQuestion.answers.forEach(answer => {
-                                    reply_markup.inline_keyboard.push([{
-                                        text: answer.text,
-                                        callback_data: `false|${thankYou}|${nextQuestion.id}|${answer.id}`,
-                                        resize_keyboard: true
-                                    }]);
-                                });
-                                if (nextQuestion.ownAnswer.text) {
-                                    reply_markup.inline_keyboard.push([{
-                                        text: nextQuestion.ownAnswer.text,
-                                        callback_data: `false|${thankYou}|${nextQuestion.id}|${nextQuestion.ownAnswer.id}|true`,
-                                        resize_keyboard: true
-                                    }]);
-                                }
-                                const opts = {
-                                    "parse_mode": "Markdown",
-                                    "reply_markup": JSON.stringify(reply_markup)
-                                };
-
-                                bot.sendMessage(user.chatId, nextQuestion.question, opts);
-                            } else {
-                                const opts = {
-                                    reply_markup: {
-                                        force_reply: true,
-                                    }
-                                };
-                                bot.sendMessage(user.chatId, nextQuestion.question, opts);
-                            }
-                            j++;
-                            if (j === unfinishedUsers.length) clearInterval(sendInterval);
-                        }, 50);
-                        
-                        res.status(200).send(JSON.stringify({msg: "Sent successfully"}));
-                    } else {
-                        res.status(200).send(JSON.stringify({msg: "No users with unanswered questions"}));
-                    }
-                })
-                .catch(error => {
-                    res.status(400).send(JSON.stringify({err: error.message || error}));
-                }))
-    };
+                  };
+                  bot.sendMessage(chatId, nextQuestion.question, opts)
+                }
+              }
+            })
+        })
+        if (isUnAnswers) {
+          res.status(200).send(JSON.stringify({msg: "Sent successfully"}));
+        } else {
+          res.status(200).send(JSON.stringify({msg: "No users with unanswered questions"}));
+        }
+      })
+      .catch(error => {
+        res.status(400).send(JSON.stringify({err: error.message || error}));
+      })
+  )
+  };
+  
+  /**
+   * Method for create survey .
+   *
+   * @param {String} req request from client
+   * @param {String} res response to client
+   * @return {Promise} promise
+   */
+  create(req, res) {
     
-    /**
-     * Method for create survey .
-     *
-     * @param {String} req request from client
-     * @param {String} res response to client
-     * @return {Promise} promise
-     */
-    create(req, res) {
+    const id = uuidV4();
+    req.body.id = id;
+    return (
+      this.model.create(req.body)
+        .then(() => {
+          res.status(200).send(JSON.stringify({id}));
+        })
+        .catch(error => {
+          res.status(400).send(JSON.stringify({err: error.message || error}));
+        }))
+  };
+  
+  /**
+   * Method for update survey .
+   *
+   * @param {String} req request from client
+   * @param {String} res response to client
+   * @return {Promise} promise
+   */
+  update(req, res) {
     
-        const id = uuidV4();
-        req.body.id = id;
-        return (
-            this.model.create(req.body)
-                .then(() => {
-                    res.status(200).send(JSON.stringify({id}));
-                })
-                .catch(error => {
-                    res.status(400).send(JSON.stringify({err: error.message || error}));
-                }))
-    };
+    return (
+      this.model.update(req.body)
+        .then(() => {
+          res.status(200).send(JSON.stringify({msg: "Survey updated"}));
+        })
+        .catch(error => {
+          res.status(400).send(JSON.stringify({err: error.message || error}));
+        }))
+  };
+  
+  /**
+   * Method for delete survey .
+   *
+   * @param {String} req request from client
+   * @param {String} res response to client
+   * @return {Promise} promise
+   */
+  remove(req, res) {
     
-    /**
-     * Method for update survey .
-     *
-     * @param {String} req request from client
-     * @param {String} res response to client
-     * @return {Promise} promise
-     */
-    update(req, res) {
-        
-        return (
-            this.model.update(req.body)
-                .then(() => {
-                    res.status(200).send(JSON.stringify({msg: "Survey updated"}));
-                })
-                .catch(error => {
-                    res.status(400).send(JSON.stringify({err: error.message || error}));
-                }))
-    };
+    return (
+      this.model.remove(req.body.id)
+        .then(() => {
+          res.status(200).send(JSON.stringify({msg: "Survey deleted"}));
+        })
+        .catch(error => {
+          res.status(400).send(JSON.stringify({err: error.message || error}));
+        }))
+  };
+  
+  /**
+   * Method for activate telegram survey.
+   *
+   * @param {String} req request from client
+   * @param {String} res response to client
+   * @return {Promise} promise
+   */
+  activateTelegram(req, res) {
     
-    /**
-     * Method for delete survey .
-     *
-     * @param {String} req request from client
-     * @param {String} res response to client
-     * @return {Promise} promise
-     */
-    remove(req, res) {
-        
-        return (
-            this.model.remove(req.body.id)
-	            .then(() => {
-	                res.status(200).send(JSON.stringify({msg: "Survey deleted"}));
-	            })
-	            .catch(error => {
-	                res.status(400).send(JSON.stringify({err: error.message || error}));
-	            }))
-    };
-    
-    /**
-     * Method for activate telegram survey.
-     *
-     * @param {String} req request from client
-     * @param {String} res response to client
-     * @return {Promise} promise
-     */
-    activateTelegram(req, res) {
-        
-        return (
-            this.model.activateTelegram(req.body)
-                .then(() => {
-                    res.status(200).send(JSON.stringify({msg: "Survey status changed"}));
-                })
-                .catch(error => {
-                    res.status(400).send(JSON.stringify({err: error.message || error}));
-                }))
-    };
+    return (
+      this.model.activateTelegram(req.body)
+        .then(() => {
+          res.status(200).send(JSON.stringify({msg: "Survey status changed"}));
+        })
+        .catch(error => {
+          res.status(400).send(JSON.stringify({err: error.message || error}));
+        }))
+  };
   
   /**
    * Method for activate facebook survey.

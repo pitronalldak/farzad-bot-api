@@ -94,4 +94,24 @@ export default class Model {
             });
         });
     }
+    
+    /**
+    * Counter for feed topics
+    *
+    * @param {Object} criteria
+    * @returns {Promise}
+    */
+    count(criteria) {
+    
+        return new Promise((resolve, reject) => {
+            let query = this.entity
+                .find({ ...criteria })
+                .count();
+    
+            query.exec((err, data) => {
+                data = data && data || 0;
+                return (err) ? reject(err) : resolve(data);
+            });
+        });
+    }
 }
