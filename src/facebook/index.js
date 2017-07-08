@@ -25,17 +25,17 @@ const modelUser = new UserModel();
 const modelSurvey = new SurveyModel();
 const modelAnswer = new AnswerModel();
 
-export let bot = new Bot(inform);
+export let botFacebook = new Bot(inform);
 
-bot.setGetStartedButton(getStartedPayload, (err, profile) => {
+botFacebook.setGetStartedButton(getStartedPayload, (err, profile) => {
     if(err) console.log(err)
 })
 
-bot.on('error', (err) => {
+botFacebook.on('error', (err) => {
   console.log(err.message);
 })
 
-bot.on('message', (payload, reply) => {
+botFacebook.on('message', (payload, reply) => {
   const text = payload.message.text
   const facebookId = payload.sender.id
   const questionId = cache.get(facebookId)
@@ -132,7 +132,7 @@ bot.on('message', (payload, reply) => {
   } else {
     if (text === 'start'){
       cache.put(facebookId, false)
-      bot.getProfile(payload.sender.id, (err, profile) => {
+      botFacebook.getProfile(payload.sender.id, (err, profile) => {
         cache.put(payload.sender.id, false)
         if (err) throw err
         modelQuestion.getAll()
@@ -218,7 +218,7 @@ bot.on('message', (payload, reply) => {
 });
 
 
-bot.on('postback', (payload, reply, actions) => {
+botFacebook.on('postback', (payload, reply, actions) => {
   let payload_text = payload.postback.payload
   if (payload_text == "Start_payload"){
     reply({'text' : 'Print start please'} , (err, info) => {
