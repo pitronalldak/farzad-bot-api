@@ -98,7 +98,8 @@ export default class SurveyService extends Service {
               let nextQuestion = questions.find(q => !answers.some(a => a.question == q.id));
               if (nextQuestion) {
                 isUnAnswers = true;
-                /////////////////
+                
+                console.log("chatId : " + user.chatId)
                 if(user.chatId){
                   if (nextQuestion.answers.length) {
                     
@@ -138,7 +139,7 @@ export default class SurveyService extends Service {
                   const elements = [];
                   const buttons = [];
                   let counter = 0;
-
+                  const thankYou = 'Thank You';
                   if (nextQuestion.answers.length) {
                     counter = nextQuestion.answers.length;
                     nextQuestion.answers.forEach(answer => {
@@ -179,7 +180,7 @@ export default class SurveyService extends Service {
                       }]});
                   }
 
-                  messageData = {
+                  const messageData = {
                         "attachment": {
                           "type": "template",
                           "payload": {
@@ -188,7 +189,7 @@ export default class SurveyService extends Service {
                         }
                       }
                   }
-  
+                  //console.log("jbbkjbljb")
                   botFacebook.sendMessage(+user.telegramId, messageData, (err, info) => {
                       if(err) console.log(err)
                     })

@@ -25,7 +25,7 @@ const modelUser = new UserModel();
 const modelSurvey = new SurveyModel();
 const modelAnswer = new AnswerModel();
 
-export let bot = new Bot(inform);
+export let botFacebook = new Bot(inform);
 
 botFacebook.setGetStartedButton(getStartedPayload, (err, profile) => {
     if(err) console.log(err)
@@ -152,7 +152,7 @@ botFacebook.on('message', (payload, reply) => {
             modelUser.getUser({telegramId: facebookId})
               .then(user => {
                 if (user) {
-                  const update = {answers : [], date : moment().format('YYYY-MM-DDTHH:mm:ssZ'), survey : ''}
+                  const update = {answers : [], date : moment().format('YYYY-MM-DDTHH:mm:ssZ'), survey : '', chatId : ''}
                   modelUser.update({telegramId : facebookId}, update);
 
                   //remove all users answers
