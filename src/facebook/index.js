@@ -25,7 +25,7 @@ const modelUser = new UserModel();
 const modelSurvey = new SurveyModel();
 const modelAnswer = new AnswerModel();
 
-export let botFacebook = new Bot(inform);
+export let bot = new Bot(inform);
 
 botFacebook.setGetStartedButton(getStartedPayload, (err, profile) => {
     if(err) console.log(err)
@@ -82,9 +82,14 @@ botFacebook.on('message', (payload, reply) => {
                                 payload: `false|${thankYou}|${nextQuestion.id}|${nextQuestion.ownAnswer.id}|true`
                               })
                             }
-
                             for(let i = 0; i < counter; ) {
-                              const pack = { title : nextQuestion.question, 
+                              let title;
+                              if(i == 0){
+                                title = nextQuestion.question
+                              } else {
+                                title = '_';
+                              }
+                              const pack = { title : title, 
                                 buttons : []}
                                 pack.buttons.push(buttons[i]);
                                 i++;
@@ -184,7 +189,13 @@ botFacebook.on('message', (payload, reply) => {
               });
 
               for(let i = 0; i < counter; ) {
-                const pack = { title : "Choose language please", 
+                let title;
+                if(i == 0){
+                  title = "Choose language please";
+                } else {
+                  title = '_';
+                }
+                const pack = { title : title, 
                   buttons : []}
                   pack.buttons.push(buttons[i]);
                   i++;
@@ -305,7 +316,13 @@ botFacebook.on('postback', (payload, reply, actions) => {
                     }
 
                     for(let i = 0; i < counter; ) {
-                      const pack = { title : responseQuestion.question, 
+                      let title;
+                      if(i == 0){
+                        title = responseQuestion.question
+                      } else {
+                        title = '_';
+                      }
+                      const pack = { title : title, 
                         buttons : []}
                         pack.buttons.push(buttons[i]);
                         i++;
@@ -387,7 +404,13 @@ botFacebook.on('postback', (payload, reply, actions) => {
                           });
                         }
                         for(let i = 0; i < counter; ) {
-                          const pack = { title : nextQuestion.question, 
+                          let title;
+                              if(i == 0){
+                                title = nextQuestion.question
+                              } else {
+                                title = '_';
+                              }
+                          const pack = { title : title, 
                             buttons : []}
                             pack.buttons.push(buttons[i]);
                             i++;
