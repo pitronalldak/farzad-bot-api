@@ -44,4 +44,8 @@ export default class AnswerModel {
   update(criteria, update) {
     return this.model.update(criteria, update);
   }
+
+  remove(criteria) {
+      return this.model.remove(criteria);
+    }
 }

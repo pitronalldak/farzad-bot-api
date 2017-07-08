@@ -6,14 +6,14 @@ const Bot = require('messenger-bot');
 
 
 let inform = {
-	  token: 'EAAB88KgOVIMBACcAIMquCpZA5s4ebZAnJygIYZAZBL5XYlc4MuEJpS0am7mmuyR2A2FftFDtwIcudTNSedqjnYBvXRR6sZA7QpmStNmfOb2ugcsG7zbcLzo3luheGBbFUCK5ZAQg0m5EQAKzwuL4hBE4JREUAFms98UWmHTykEFQZDZD',
-	  verify: 'veryveryverify_token_for_my_test_bot',
-	  app_secret: 'ee4ae72413dcef839fadf7def128730f'
-	};
+    token: 'EAAB88KgOVIMBACcAIMquCpZA5s4ebZAnJygIYZAZBL5XYlc4MuEJpS0am7mmuyR2A2FftFDtwIcudTNSedqjnYBvXRR6sZA7QpmStNmfOb2ugcsG7zbcLzo3luheGBbFUCK5ZAQg0m5EQAKzwuL4hBE4JREUAFms98UWmHTykEFQZDZD',
+    verify: 'veryveryverify_token_for_my_test_bot',
+    app_secret: 'ee4ae72413dcef839fadf7def128730f'
+  };
 
 let getStartedPayload = [{
       "payload":"Start_payload"
-	}];
+  }];
 
 import QuestionModel from '../models/question';
 import UserModel from '../models/user';
@@ -48,7 +48,7 @@ bot.on('message', (payload, reply) => {
               .then((user) => {
                 const id = uuid.v4();
                 modelAnswer.create({
-                  id,
+                  id : id,
                   question: questionId,
                   user: facebookId,
                   text: text
@@ -59,33 +59,44 @@ bot.on('message', (payload, reply) => {
                     
                     modelAnswer.getByUser(facebookId)
                       .then(answers => {
-                        let nextQuestion = questions.find(q => !answers.some(a => a.question == q.id));
+                        let nextQuestion = questions.find(q => (!answers.some(a => a.question == q.id) && user.survey === q.survey));
                         if (nextQuestion) {
                           const elements = [];
+                          const buttons = [];
+                          let counter = 0;
                           if (nextQuestion.answers.length) {
+                            counter = nextQuestion.answers.length;
                             nextQuestion.answers.forEach(answer => {
-                              elements.push({
-                                  title : nextQuestion.question,
-                                  buttons : [{
+                              buttons.push({
                                   type : 'postback',
                                   title: answer.text,
                                   payload: `false|${thankYou}|${nextQuestion.id}|${answer.id}`
-                                  }]
                                 })
                             });
+
                             if (nextQuestion.ownAnswer.text) {
-                              elements.push({ 
-                                title : nextQuestion.question,
-                                buttons : [{
+                              counter++;
+                              buttons.push({
                                 type : 'postback',
                                 title: nextQuestion.ownAnswer.text,
                                 payload: `false|${thankYou}|${nextQuestion.id}|${nextQuestion.ownAnswer.id}|true`
-                              }]});
+                              })
                             }
+
+                            for(let i = 0; i < counter; ) {
+                              const pack = { title : nextQuestion.question, 
+                                buttons : []}
+                                pack.buttons.push(buttons[i]);
+                                i++;
+                              for(;!!(i % 3) && i < counter; i++){
+                                pack.buttons.push(buttons[i]);
+                              }
+                              elements.push(pack);
+                            }
+
 
                           }
                           else {
-                            console.log(nextQuestion.question)
                             elements.push({ 
                               title : nextQuestion.question,
                               buttons : [{
@@ -94,6 +105,7 @@ bot.on('message', (payload, reply) => {
                               payload: `false|${thankYou}|${nextQuestion.id}|${nextQuestion.ownAnswer.id}|true`
                               }]});
                           }
+
                           const messageData = {
                                 "attachment": {
                                   "type": "template",
@@ -119,28 +131,35 @@ bot.on('message', (payload, reply) => {
 
   } else {
     if (text === 'start'){
+      cache.put(facebookId, false)
       bot.getProfile(payload.sender.id, (err, profile) => {
         cache.put(payload.sender.id, false)
         if (err) throw err
         modelQuestion.getAll()
-          .then(questions => {
+        .then(questions => {
             const userData = {
               date: moment().format('YYYY-MM-DDTHH:mm:ssZ'),
               username: `${profile.first_name} ${profile.last_name}`,
-              telegramId: payload.sender.id,
-              chatId: payload.sender.id,
+              telegramId: facebookId,
+              chatId: '',
               answers: []
             };
-            modelUser.getUser({telegramId: payload.sender.id})
+            modelUser.getUser({telegramId: facebookId})
               .then(user => {
                 if (user) {
-                  user.answers = [];
-                  user.date = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-                  questions.forEach(q => user.answers.push({question: q.question, questionId: q.id}));
-                  user.chatId = userData.chatId;
+                  const update = {answers : [], date : moment().format('YYYY-MM-DDTHH:mm:ssZ'), survey : ''}
+                  modelUser.update({telegramId : facebookId}, update);
+
+                  //remove all users answers
+                  modelAnswer.getByUser(facebookId)
+                    .then(answers => {
+                      answers.forEach(answer => {
+                        modelAnswer.remove({id : answer.id})
+                      })
+                  })
+
                   return user.save();
                 } else {
-                  questions.forEach(q => userData.answers.push({question: q.question, questionId: q.id}));
                   return modelUser.create(userData);
                 }
               });
@@ -149,18 +168,31 @@ bot.on('message', (payload, reply) => {
         modelSurvey.getAll()
           .then((surveys) => {
             const elements = [];
-            if (surveys.length && surveys.some(s => s.isActive)) {
+            const buttons = [];
+            let counter = 0;
+            if (surveys.length && surveys.some(s => s.isActiveFacebook)) {
               surveys.forEach(survey => {
-                if (survey.isActive) {
-                  elements.push({
-                    title : "Choose language please",
-                    buttons : [{
+                if (survey.isActiveFacebook) {
+                  counter++;
+                  buttons.push({
                     type : 'postback',
                     title: survey.name,
                     payload: `true|${survey.id}|${survey.thankYou}`
-                  }]});
+                  });
                 }
+
               });
+
+              for(let i = 0; i < counter; ) {
+                const pack = { title : "Choose language please", 
+                  buttons : []}
+                  pack.buttons.push(buttons[i]);
+                  i++;
+                for(;!!(i % 3) && i < counter; i++){
+                  pack.buttons.push(buttons[i]);
+                }
+                elements.push(pack);
+              }
               const messageData = {
                                 "attachment": {
                                   "type": "template",
@@ -218,18 +250,29 @@ bot.on('postback', (payload, reply, actions) => {
           let questionsFiltered;
           if (isFirst  === 'true') {
             const survey = { survey : surveyId };
-            modelUser.update({telegramId: facebookId}, survey);
+            modelUser.update({telegramId : facebookId}, survey);
+            user.survey = surveyId;
+            user.save();
             modelQuestion.getAll()
               .then(questions => {
-                let questionsFiltered = questions.filter(q => q.survey === surveyId);
-                const answer = {text: ''};
-                questionsFiltered.forEach(q => {
-                  modelAnswer.update({user: user.telegramId , question: q.id}, answer);
-                });
+                //remove user answers for an survey
+                /*modelAnswer.getByUser(facebookId)
+                .then(answers => {
+                  let questionsFiltered = questions.filter(q => q.survey === surveyId);
+
+                  answers.forEach(answer => {
+                    if(questionsFiltered.find(q => answer.question === q.id)){
+                      modelAnswer.remove({id : answer.id});
+                    }
+                  });
+                })*/
               })
               .then(() => {
                 questionsFiltered = questions.filter(q => q.survey === surveyId);
                 const elements = [];
+                const buttons = [];
+                let counter = 0;
+
                 let responseQuestion;
                 let questionExist = false;
 
@@ -243,25 +286,35 @@ bot.on('postback', (payload, reply, actions) => {
                 if (questionExist) {
 
                   if (responseQuestion.answers.length) {
+                    counter = responseQuestion.answers.length;
                     responseQuestion.answers.forEach(answer => {
-                      elements.push({ 
-                        title : responseQuestion.question,
-                        buttons : [{
+                      buttons.push({
                           type : 'postback',
                           title: answer.text,
                           payload: `false|${thankYou}|${responseQuestion.id}|${answer.id}`
-                      }]})
+                      })
                     });
 
                     if (responseQuestion.ownAnswer.text) {
-                      elements.push({
-                        title : responseQuestion.question,
-                        buttons : [{
+                      counter++;
+                      buttons.push({
                         type : 'postback',
                         title: responseQuestion.ownAnswer.text,
                         payload: `false|${thankYou}|${responseQuestion.id}|${responseQuestion.ownAnswer.id}|true`
-                      }]});
+                      });
                     }
+
+                    for(let i = 0; i < counter; ) {
+                      const pack = { title : responseQuestion.question, 
+                        buttons : []}
+                        pack.buttons.push(buttons[i]);
+                        i++;
+                      for(;!!(i % 3) && i < counter; i++){
+                        pack.buttons.push(buttons[i]);
+                      }
+                      elements.push(pack);
+                    }
+
                   } else {
                     elements.push({
                         title : responseQuestion.question,
@@ -301,38 +354,49 @@ bot.on('postback', (payload, reply, actions) => {
                 .find(a => a.id == answerId).text;
               const id = uuid.v4();
               modelAnswer.create({
-                id,
+                id : id,
                 question: questionId,
                 user: facebookId,
                 text: answer
               })
               .then(() => {
                 const elements = [];
-
+                const buttons = [];
+                let counter = 0;
                 modelAnswer.getByUser(facebookId)
                   .then(answers => {
-                    let nextQuestion = questions.find(q => !answers.some(a => a.question == q.id));
+                    let nextQuestion = questions.find(q => (!answers.some(a => a.question === q.id) && user.survey === q.survey));
+
                     if (nextQuestion) {
                       if (nextQuestion.answers.length) {
+                        counter = nextQuestion.answers.length;
                         nextQuestion.answers.forEach(answer => {
-                          elements.push({
-                            title : nextQuestion.question,
-                            buttons : [{
+                          buttons.push({
                             type : 'postback',
                             title: answer.text,
                             payload: `false|${thankYou}|${nextQuestion.id}|${answer.id}`
-                          }]});
+                          });
                         });
 
                         if (nextQuestion.ownAnswer.text) {
-                          elements.push({
-                            title : nextQuestion.question,
-                            buttons : [{
+                          counter++;
+                          buttons.push({
                             type : 'postback',
                             title: nextQuestion.ownAnswer.text,
                             payload: `false|${thankYou}|${nextQuestion.id}|${nextQuestion.ownAnswer.id}|true`
-                          }]});
+                          });
                         }
+                        for(let i = 0; i < counter; ) {
+                          const pack = { title : nextQuestion.question, 
+                            buttons : []}
+                            pack.buttons.push(buttons[i]);
+                            i++;
+                          for(;!!(i % 3) && i < counter; i++){
+                            pack.buttons.push(buttons[i]);
+                          }
+                          elements.push(pack);
+                        }
+
 
                       } else {
                         elements.push({
