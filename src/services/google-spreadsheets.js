@@ -18,7 +18,7 @@ const TOKEN_PATH = TOKEN_DIR + 'sheets.googleapis.com-nodejs-quickstart.json';
 
 // Load client secrets from a local file.
 
-exports.postSpreadSheets = (questions, users, surveys, callback) => {
+exports.postSpreadSheets = (questions, users, surveys, answers, callback) => {
     const content = {
         installed: {
             client_id:"554247570808-07ll9564csph8445unhj7fte8robleun.apps.googleusercontent.com",
@@ -32,7 +32,7 @@ exports.postSpreadSheets = (questions, users, surveys, callback) => {
     
     // Authorize a client with the loaded credentials, then call the
     // Google Sheets API.
-    authorize(content, listMajors(questions, users, surveys, callback));
+    authorize(content, listMajors(questions, users, surveys, answers, callback));
 };
 
 /**
@@ -124,13 +124,13 @@ function toLetters(num) {
 /**
  * Print the data in a spreadsheet:
  */
-function writeDataToSheets(auth, sheets, users, questions, survey, callback) {
+function writeDataToSheets(auth, sheets, users, questions, survey, answers, callback) {
 	let userList = [];
 	let columns = [];
 	let userQuantity = 0;
 	let questionQuantity = 0;
 	for (let user of users) {
-		user.answers = user.answers.filter(a => a.isDeleted === false);
+		user.answers = answers.filter(a => a.isDeleted === false && a.user === user.telegramId);
 		user.answers.sort((a, b) => {
 			return questions.find(q => q.id === a.questionId).index - questions.find(q => q.id === b.questionId).index
 		});
@@ -250,7 +250,7 @@ function writeDataToSheets(auth, sheets, users, questions, survey, callback) {
 	});
 }
 
-const listMajors = (questions, users, surveys, callback) => (
+const listMajors = (questions, users, surveys, answers, callback) => (
 	(auth) => {
 		const sheets = google.sheets('v4');
 		sheets.spreadsheets.get({
@@ -281,10 +281,10 @@ const listMajors = (questions, users, surveys, callback) => (
 							console.log(err);
 							return;
 						}
-						writeDataToSheets(auth, sheets, users, questions, survey, callback);
+						writeDataToSheets(auth, sheets, users, questions, survey, answers, callback);
 					})
 				} else {
-					writeDataToSheets(auth, sheets, users, questions, survey, callback);
+					writeDataToSheets(auth, sheets, users, questions, survey, answers, callback);
 				}
 			});
 		});
