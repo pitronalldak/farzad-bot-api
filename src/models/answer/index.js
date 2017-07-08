@@ -30,6 +30,10 @@ export default class AnswerModel {
     this.model = new Model(Answer);
   }
   
+  getAll() {
+    return this.model.select({});
+  }
+
   create(answer) {
     return this.model.create(answer);
   }

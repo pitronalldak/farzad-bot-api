@@ -209,6 +209,7 @@ function writeDataToSheets(auth, sheets, users, questions, survey, answers, call
 				stringValue: 'total number of users - ' + userQuantity,
 			}
 		});
+	
 	sheets.spreadsheets.get({
 		spreadsheetId: spreadsheet,
 		includeGridData: true,
@@ -223,6 +224,7 @@ function writeDataToSheets(auth, sheets, users, questions, survey, answers, call
 			values: columns,
 		}];
 		userList.forEach(user => values.push(user));
+
 		sheets.spreadsheets.batchUpdate({
 			spreadsheetId: spreadsheet,
 			resource: {
