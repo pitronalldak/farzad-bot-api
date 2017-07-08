@@ -151,12 +151,12 @@ bot.on('message', (payload, reply) => {
                   modelUser.update({telegramId : facebookId}, update);
 
                   //remove all users answers
-                  /*modelAnswer.getByUser(facebookId)
+                  modelAnswer.getByUser(facebookId)
                     .then(answers => {
                       answers.forEach(answer => {
                         modelAnswer.remove({id : answer.id})
                       })
-                  })*/
+                  })
 
                   return user.save();
                 } else {
@@ -255,7 +255,8 @@ bot.on('postback', (payload, reply, actions) => {
             user.save();
             modelQuestion.getAll()
               .then(questions => {
-                modelAnswer.getByUser(facebookId)
+                //remove user answers for an survey
+                /*modelAnswer.getByUser(facebookId)
                 .then(answers => {
                   let questionsFiltered = questions.filter(q => q.survey === surveyId);
 
@@ -264,8 +265,8 @@ bot.on('postback', (payload, reply, actions) => {
                       modelAnswer.remove({id : answer.id});
                     }
                   });
-                })
-            })
+                })*/
+              })
               .then(() => {
                 questionsFiltered = questions.filter(q => q.survey === surveyId);
                 const elements = [];

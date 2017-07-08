@@ -145,7 +145,8 @@ bot.on('callback_query', callbackQuery => {
             modelUser.update({telegramId: telegramId}, survey);
             modelQuestion.getAll()
               .then(questions => {
-                modelAnswer.getByUser(telegramId)
+                //remove user answers for an survey
+                /*modelAnswer.getByUser(telegramId)
                 .then(answers => {
                   let questionsFiltered = questions.filter(q => q.survey === surveyId);
                   answers.forEach(answer => {
@@ -153,7 +154,7 @@ bot.on('callback_query', callbackQuery => {
                       modelAnswer.remove({id : answer.id});
                     }
                   });
-                })
+                })*/
               })
               .then(() => {
                 questionsFiltered = questions.filter(q => q.survey === surveyId);
@@ -289,12 +290,12 @@ bot.onText(/start/, function (msg, match) {
             const update = {answers : [], date : moment().format('YYYY-MM-DDTHH:mm:ssZ'), survey : ''}
             modelUser.update({telegramId : msg.from.id}, update);
             //remove all users answers
-            /*modelAnswer.getByUser(msg.from.id)
+            modelAnswer.getByUser(msg.from.id)
               .then(answers => {
                 answers.forEach(answer => {
                   modelAnswer.remove({id : answer.id})
                 })
-              })*/
+              })
 
             return user.save();
           } else {

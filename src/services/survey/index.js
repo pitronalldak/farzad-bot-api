@@ -97,31 +97,92 @@ export default class SurveyService extends Service {
   
               if (nextQuestion) {
                 isUnAnswers = true;
-                if (nextQuestion.answers.length) {
-                  nextQuestion.answers.forEach(answer => {
-                    opts.reply_markup.inline_keyboard.push([{
-                      text: answer.text,
-                      callback_data: `false|${thankYou}|${nextQuestion.id}|${answer.id}`,
-                      resize_keyboard: true
-                    }])
-                  });
-                  if (nextQuestion.ownAnswer.text) {
-                    opts.reply_markup.inline_keyboard.push([{
-                      text: nextQuestion.ownAnswer.text,
-                      callback_data: `false|${thankYou}|${nextQuestion.id}|${nextQuestion.ownAnswer.id}|true`
-                    }]);
-                  }
-                  bot.sendMessage(chatId, nextQuestion.question, opts);
-                }
-                else {
-                  console.log(nextQuestion.question)
-                  const opts = {
-                    reply_markup: {
-                      force_reply: true,
-          
+                /////////////////
+                if(user.chatId){
+                  if (nextQuestion.answers.length) {
+                    nextQuestion.answers.forEach(answer => {
+                      opts.reply_markup.inline_keyboard.push([{
+                        text: answer.text,
+                        callback_data: `false|${thankYou}|${nextQuestion.id}|${answer.id}`,
+                        resize_keyboard: true
+                      }])
+                    });
+                    if (nextQuestion.ownAnswer.text) {
+                      opts.reply_markup.inline_keyboard.push([{
+                        text: nextQuestion.ownAnswer.text,
+                        callback_data: `false|${thankYou}|${nextQuestion.id}|${nextQuestion.ownAnswer.id}|true`
+                      }]);
                     }
-                  };
-                  bot.sendMessage(chatId, nextQuestion.question, opts)
+                    bot.sendMessage(chatId, nextQuestion.question, opts);
+                  }
+                  else {
+                    console.log(nextQuestion.question)
+                    const opts = {
+                      reply_markup: {
+                        force_reply: true,
+            
+                      }
+                    };
+                    bot.sendMessage(chatId, nextQuestion.question, opts)
+                  }
+                } else {
+                  const elements = [];
+                  const buttons = [];
+                  let counter = 0;
+
+                  if (nextQuestion.answers.length) {
+                    counter = nextQuestion.answers.length;
+                    nextQuestion.answers.forEach(answer => {
+                      buttons.push({
+                        type : 'postback',
+                        title: answer.text,
+                        payload: `false|${thankYou}|${nextQuestion.id}|${answer.id}`
+                      })
+                    });
+                    if (nextQuestion.ownAnswer.text) {
+                      counter++;
+                      buttons.push({
+                        type : 'postback',
+                        title : nextQuestion.ownAnswer.text,
+                        payload : `false|${thankYou}|${nextQuestion.id}|${nextQuestion.ownAnswer.id}|true`
+                      });
+                    }
+
+                    for(let i = 0; i < counter; ) {
+                      const pack = { title : nextQuestion.question, 
+                        buttons : []}
+                        pack.buttons.push(buttons[i]);
+                        i++;
+                      for(;!!(i % 3) && i < counter; i++){
+                        pack.buttons.push(buttons[i]);
+                      }
+                      elements.push(pack);
+                    }
+
+                  }
+                  else {
+                    elements.push({
+                        title : nextQuestion.question,
+                        buttons : [{
+                        type : 'postback',
+                        title : nextQuestion.ownAnswer.text,
+                        payload : `false|${thankYou}|${nextQuestion.id}|${nextQuestion.ownAnswer.id}|true`
+                      }]});
+                  }
+
+                  messageData = {
+                        "attachment": {
+                          "type": "template",
+                          "payload": {
+                            "template_type":"generic",
+                            "elements": JSON.stringify(elements)    
+                        }
+                      }
+                  }
+                  
+                  bot.sendMessage(+user.telegramId, messageData, (err, info) => {
+                      if(err) console.log(err)
+                    })
                 }
               }
             })
