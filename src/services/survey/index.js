@@ -178,8 +178,8 @@ export default class SurveyService extends Service {
                         payload : `false|${thankYou}|${nextQuestion.id}|${nextQuestion.ownAnswer.id}|true`
                       }]});
                   }
-
-                  messageData = {
+                  const thankYou = 'Thank You';
+                  const messageData = {
                         "attachment": {
                           "type": "template",
                           "payload": {
