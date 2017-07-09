@@ -82,9 +82,14 @@ botFacebook.on('message', (payload, reply) => {
                                 payload: `false|${thankYou}|${nextQuestion.id}|${nextQuestion.ownAnswer.id}|true`
                               })
                             }
-
                             for(let i = 0; i < counter; ) {
-                              const pack = { title : nextQuestion.question, 
+                              let title;
+                              if(i == 0){
+                                title = nextQuestion.question
+                              } else {
+                                title = '_';
+                              }
+                              const pack = { title : title, 
                                 buttons : []}
                                 pack.buttons.push(buttons[i]);
                                 i++;
@@ -147,7 +152,7 @@ botFacebook.on('message', (payload, reply) => {
             modelUser.getUser({telegramId: facebookId})
               .then(user => {
                 if (user) {
-                  const update = {answers : [], date : moment().format('YYYY-MM-DDTHH:mm:ssZ'), survey : ''}
+                  const update = {answers : [], date : moment().format('YYYY-MM-DDTHH:mm:ssZ'), survey : '', chatId : ''}
                   modelUser.update({telegramId : facebookId}, update);
 
                   //remove all users answers
@@ -184,7 +189,13 @@ botFacebook.on('message', (payload, reply) => {
               });
 
               for(let i = 0; i < counter; ) {
-                const pack = { title : "Choose language please", 
+                let title;
+                if(i == 0){
+                  title = "Choose language please";
+                } else {
+                  title = '_';
+                }
+                const pack = { title : title, 
                   buttons : []}
                   pack.buttons.push(buttons[i]);
                   i++;
@@ -305,7 +316,13 @@ botFacebook.on('postback', (payload, reply, actions) => {
                     }
 
                     for(let i = 0; i < counter; ) {
-                      const pack = { title : responseQuestion.question, 
+                      let title;
+                      if(i == 0){
+                        title = responseQuestion.question
+                      } else {
+                        title = '_';
+                      }
+                      const pack = { title : title, 
                         buttons : []}
                         pack.buttons.push(buttons[i]);
                         i++;
@@ -387,7 +404,13 @@ botFacebook.on('postback', (payload, reply, actions) => {
                           });
                         }
                         for(let i = 0; i < counter; ) {
-                          const pack = { title : nextQuestion.question, 
+                          let title;
+                              if(i == 0){
+                                title = nextQuestion.question
+                              } else {
+                                title = '_';
+                              }
+                          const pack = { title : title, 
                             buttons : []}
                             pack.buttons.push(buttons[i]);
                             i++;
