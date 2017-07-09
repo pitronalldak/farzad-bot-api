@@ -101,15 +101,6 @@ botFacebook.on('message', (payload, reply) => {
 
 
                           }
-                          else {
-                            elements.push({ 
-                              title : nextQuestion.question,
-                              buttons : [{
-                              type : 'postback',
-                              title: nextQuestion.ownAnswer.text,
-                              payload: `false|${thankYou}|${nextQuestion.id}|${nextQuestion.ownAnswer.id}|true`
-                              }]});
-                          }
 
                           const messageData = {
                                 "attachment": {
@@ -121,9 +112,20 @@ botFacebook.on('message', (payload, reply) => {
                               }
                           }
 
-                          reply(messageData , (err, info) => {
-                            if(err) console.log(err)
-                          });
+                          if(elements.length){
+                            reply(messageData , (err, info) => {
+                              if(err) console.log(err)
+                            });
+
+                          } else {
+                            reply({ 'text' : nextQuestion.question }, (err, info) => {
+                                  if(err) console.log(err)
+                                  reply({ 'text' : 'Print answer please' }, (err, info) => {
+                                    if(err) console.log(err)
+                                  });
+                                });
+                            cache.put(facebookId, nextQuestion.id);
+                          }
                         } else {
                           reply( { 'text' : thankYou }, (err, info) => {
                             if(err) console.log(err)
@@ -332,15 +334,7 @@ botFacebook.on('postback', (payload, reply, actions) => {
                       elements.push(pack);
                     }
 
-                  } else {
-                    elements.push({
-                        title : responseQuestion.question,
-                        buttons : [{
-                        type : 'postback',
-                        title: responseQuestion.ownAnswer.text,
-                        payload: `false|${thankYou}|${responseQuestion.id}|${responseQuestion.ownAnswer.id}|true`
-                      }]});
-                  }
+                  } 
                   const messageData = {
                                 "attachment": {
                                   "type": "template",
@@ -350,9 +344,19 @@ botFacebook.on('postback', (payload, reply, actions) => {
                                 }
                               }
                           }
-                  reply(messageData , (err, info) => {
+                  if(elements.length){
+                    reply(messageData , (err, info) => {
+                        if(err) console.log(err)
+                      });
+                  } else {
+                    reply({ 'text' : responseQuestion.question }, (err, info) => {
                       if(err) console.log(err)
+                      reply({ 'text' : 'Print answer please' }, (err, info) => {
+                        if(err) console.log(err)
+                      });
                     });
+                    cache.put(facebookId, responseQuestion.id);
+                  }
                 } else {
                   reply( { 'text' : 'Sorry, we don\'t have any surveys yet' }, (err, info) => {
                     if(err) console.log(err)
@@ -421,15 +425,8 @@ botFacebook.on('postback', (payload, reply, actions) => {
                         }
 
 
-                      } else {
-                        elements.push({
-                            title : nextQuestion.question,
-                            buttons : [{
-                            type : 'postback',
-                            title: nextQuestion.ownAnswer.text,
-                            payload: `false|${thankYou}|${nextQuestion.id}|${nextQuestion.ownAnswer.id}|true`
-                          }]});
                       }
+
                       const messageData = {
                                 "attachment": {
                                   "type": "template",
@@ -439,10 +436,20 @@ botFacebook.on('postback', (payload, reply, actions) => {
                                 }
                               }
                           }
-
+                      if(elements.length){
                         reply(messageData , (err, info) => {
                           if(err) console.log(err)
                         });
+                      } else {
+                        reply({ 'text' : nextQuestion.question }, (err, info) => {
+                          if(err) console.log(err)
+                          reply({ 'text' : 'Print answer please' }, (err, info) => {
+                            if(err) console.log(err)
+                          });
+                        });
+                        
+                        cache.put(facebookId, nextQuestion.id);
+                      }
                     } else {
                        reply( { 'text' : thankYou }, (err, info) => {
                         if(err) console.log(err)
