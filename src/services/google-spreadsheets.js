@@ -254,7 +254,6 @@ function writeDataToSheets(auth, sheets, users, questions, survey, answers, call
 				console.log('The API returned an error: ' + err);
 				return;
 			}
-			console.log(response);
 			if (callback) callback();
 		});
 	});
