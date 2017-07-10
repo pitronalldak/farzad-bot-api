@@ -5,6 +5,7 @@ import UserModel from '../../models/user';
 import AnswerModel from '../../models/answer';
 import {bot} from '../../telegram';
 import {botFacebook} from '../../facebook';
+import {cache} from '../../facebook';
 
 const uuidV4 = require('uuid/v4');
 const {postSpreadSheets} = require('../google-spreadsheets');
@@ -98,7 +99,7 @@ export default class SurveyService extends Service {
               let nextQuestion = questions.find(q => !answers.some(a => a.question == q.id));
               if (nextQuestion) {
                 isUnAnswers = true;
-                /////////////////
+                
                 if(user.chatId){
                   if (nextQuestion.answers.length) {
                     
@@ -138,7 +139,7 @@ export default class SurveyService extends Service {
                   const elements = [];
                   const buttons = [];
                   let counter = 0;
-
+                  const thankYou = 'Thank You';
                   if (nextQuestion.answers.length) {
                     counter = nextQuestion.answers.length;
                     nextQuestion.answers.forEach(answer => {
@@ -169,16 +170,7 @@ export default class SurveyService extends Service {
                     }
 
                   }
-                  else {
-                    elements.push({
-                        title : nextQuestion.question,
-                        buttons : [{
-                        type : 'postback',
-                        title : nextQuestion.ownAnswer.text,
-                        payload : `false|${thankYou}|${nextQuestion.id}|${nextQuestion.ownAnswer.id}|true`
-                      }]});
-                  }
-                  const thankYou = 'Thank You';
+
                   const messageData = {
                         "attachment": {
                           "type": "template",
@@ -188,10 +180,19 @@ export default class SurveyService extends Service {
                         }
                       }
                   }
-  
-                  botFacebook.sendMessage(user.telegramId, messageData, (err, info) => {
+                  if(elements.length){
+                   botFacebook.sendMessage(user.telegramId, messageData, (err, info) => {
                       if(err) console.log(err)
                     })
+                 } else {
+                  botFacebook.sendMessage(user.telegramId, { 'text' : nextQuestion.question }, (err, info) => {
+                        if(err) console.log(err)
+                        botFacebook.sendMessage(user.telegramId, { 'text' : 'Print answer please' }, (err, info) => {
+                          if(err) console.log(err)
+                        });
+                      });
+                  cache.put(facebookId, nextQuestion.id);
+                 }
                 }
               }
             })
