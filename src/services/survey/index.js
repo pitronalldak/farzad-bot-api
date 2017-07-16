@@ -89,7 +89,7 @@ export default class SurveyService extends Service {
         let isUnAnswers = false;
         users.forEach(user => {
           Promise.all([
-            this.modelQuestion.getAllIncludeDeleted({survey: user.survey}),
+            this.modelQuestion.getAll({survey: user.survey}),
             this.modelAnswer.getByUser(user.telegramId)
           ])
             .then(response => {
