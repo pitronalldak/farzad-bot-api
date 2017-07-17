@@ -23,7 +23,7 @@ const https = require('https');
 // const certificate = fs.readFileSync('sslcert/server.crt', 'utf8');
 // const credentials = {key: privateKey, cert: certificate};
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 80;
 
 require("./telegram");
 
