@@ -4,11 +4,15 @@ const cache = require('memory-cache');
 
 const Bot = require('messenger-bot');
 
+//Raya app_secret ee4ae72413dcef839fadf7def128730f
+//Raya token EAAB88KgOVIMBACcAIMquCpZA5s4ebZAnJygIYZAZBL5XYlc4MuEJpS0am7mmuyR2A2FftFDtwIcudTNSedqjnYBvXRR6sZA7QpmStNmfOb2ugcsG7zbcLzo3luheGBbFUCK5ZAQg0m5EQAKzwuL4hBE4JREUAFms98UWmHTykEFQZDZD
+//coinSurveyTest app_secret 6d9d2c7cd89ca219fbb91fac2423e26c
+//coinSurveyTest token EAADo1ImIiwgBAJe4p4HBIVOPomH5yOFd7kIGIXTQyvObOpSHzMM6oWzvCwuwpuwcHLkidZB7IsCGGhtAbNizZC9iZCcFZCIvhfiXu3ZBAJxl50IYVRTGJATgipYbZACI9aQ8tRU60zgX7YJF3rmyfnUXfw7Y7GvBiulj4TvWZC8TgZDZD
 
 let inform = {
-    token: 'EAAB88KgOVIMBACcAIMquCpZA5s4ebZAnJygIYZAZBL5XYlc4MuEJpS0am7mmuyR2A2FftFDtwIcudTNSedqjnYBvXRR6sZA7QpmStNmfOb2ugcsG7zbcLzo3luheGBbFUCK5ZAQg0m5EQAKzwuL4hBE4JREUAFms98UWmHTykEFQZDZD',
+    token: 'EAADo1ImIiwgBAJe4p4HBIVOPomH5yOFd7kIGIXTQyvObOpSHzMM6oWzvCwuwpuwcHLkidZB7IsCGGhtAbNizZC9iZCcFZCIvhfiXu3ZBAJxl50IYVRTGJATgipYbZACI9aQ8tRU60zgX7YJF3rmyfnUXfw7Y7GvBiulj4TvWZC8TgZDZD',
     verify: 'veryveryverify_token_for_my_test_bot',
-    app_secret: 'ee4ae72413dcef839fadf7def128730f'
+    app_secret: '6d9d2c7cd89ca219fbb91fac2423e26c'
   };
 
 let getStartedPayload = [{

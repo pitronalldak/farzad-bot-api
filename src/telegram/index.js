@@ -6,12 +6,12 @@ const action = require('../messages/bot_app/actions');
 const { postSpreadSheets } = require('../services/google-spreadsheets');
 
 // replace the value below with the Telegram token you receive from @BotFather
-//test: 330486268:AAEEi7yURFX0EZQRE7EhylamB1-WaJi5ljg
-//test2: 387449646:AAFLQTwnD9jPL06sfoApFBDT27f3VSIYU_c
-// origin: 350720484:AAEgITsnyA0ZIFgQ46ivEq7Sp2VTrt4YDUg
-// dev: 329116244:AAHDzSnwr49C2PIe4OES2HJgrZTB0QLqc_w
-// v2 dev: 360889127:AAEPjHX8IDZ3jaG4x-ATVwFxSymVfQ2ENmk
-const token = '387449646:AAFLQTwnD9jPL06sfoApFBDT27f3VSIYU_c';
+//test: 330486268:AAEEi7yURFX0EZQRE7EhylamB1-WaJi5ljg oldTestBot
+//test2: 387449646:AAFLQTwnD9jPL06sfoApFBDT27f3VSIYU_c coinSurveyTestbot mainTestBot
+// origin: 350720484:AAEgITsnyA0ZIFgQ46ivEq7Sp2VTrt4YDUg firstVersion coinsurveybot
+// dev: 329116244:AAHDzSnwr49C2PIe4OES2HJgrZTB0QLqc_w CoinSurveydevbot
+// v2 dev: 360889127:AAEPjHX8IDZ3jaG4x-ATVwFxSymVfQ2ENmk weddingBot
+const token = '329116244:AAHDzSnwr49C2PIe4OES2HJgrZTB0QLqc_w';
 
 import QuestionModel from '../models/question';
 import UserModel from '../models/user';
