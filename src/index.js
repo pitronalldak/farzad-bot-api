@@ -1,10 +1,11 @@
 import http from 'http';
+import https from 'https';
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
-
+import fs from 'fs';
 import expressValidator from 'express-validator';
 
 import config from './config.json';
@@ -17,8 +18,9 @@ import SurveyService from './services/survey';
 import QuestionService from './services/question';
 import UserService from './services/user';
 
-const fs = require('fs');
-const https = require('https');
+require("./telegram");
+require("./facebook");
+require("./messages/bot_app/models");
 
 const hskey = fs.readFileSync('src/sslcert/coinSurvey-key.pem');
 const hscert = fs.readFileSync('src/sslcert/coinSurvey-cert.pem');
@@ -28,20 +30,16 @@ const serverOptions = {
   cert: hscert
 };
 
-const port = process.env.PORT || 80;
+const httpsPort = process.env.PORT || 80;
+const httpPort = process.env.PORT2 || 8080;
 const host = 'coinsurvey.me';
-
-require("./telegram");
-
-require("./facebook");
-
-require("./messages/bot_app/models");
 
 const PASSWORD = 'Survey2017';
 
-let app = express();
+const app = express();
 
-app.server = https.createServer(serverOptions, app);
+const httpServer = http.createServer(app);
+const httpsServer = https.createServer(serverOptions, app);
 
 const corsOptions = {
     origin: ['http://localhost:3000', 'https://survey-dashboard.herokuapp.com', 'http://174.138.52.48:3000', 'http://174.138.52.48'],
@@ -89,7 +87,8 @@ function connect() {
 
 function listen() {
     if (app.get('env') === 'test') return;
-    app.listen(port, host);
+    httpServer.listen(httpPort);
+    httpsServer.listen(httpsPort);
     console.log('Express app started on port ' + port);
 }
 
