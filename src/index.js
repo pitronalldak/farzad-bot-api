@@ -19,9 +19,14 @@ import UserService from './services/user';
 
 const fs = require('fs');
 const https = require('https');
-// const privateKey  = fs.readFileSync('sslcert/server.key', 'utf8');
-// const certificate = fs.readFileSync('sslcert/server.crt', 'utf8');
-// const credentials = {key: privateKey, cert: certificate};
+
+const hskey = fs.readFileSync('../../hacksparrow-key.pem');
+const hscert = fs.readFileSync('../../hacksparrow-cert.pem');
+
+const serverOptions = {
+  key: hskey,
+  cert: hscert
+};
 
 const port = process.env.PORT || 80;
 
@@ -35,8 +40,7 @@ const PASSWORD = 'Survey2017';
 
 let app = express();
 
-app.server = http.createServer(app);
-// app.httpsServer = https.createServer(credentials, app);
+app.server = https.createServer(serverOptions, app);
 
 const corsOptions = {
     origin: ['http://localhost:3000', 'https://survey-dashboard.herokuapp.com', 'http://174.138.52.48:3000', 'http://174.138.52.48'],
