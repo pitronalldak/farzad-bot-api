@@ -22,8 +22,8 @@ require("./telegram");
 require("./facebook");
 require("./messages/bot_app/models");
 
-const hskey = fs.readFileSync('src/sslcert/coinSurvey-key.pem');
-const hscert = fs.readFileSync('src/sslcert/coinSurvey-cert.pem');
+const hskey = fs.readFileSync('../../../etc/letsencrypt/live/coinsurvey.me/fullchain.pem');
+const hscert = fs.readFileSync('../../../etc/letsencrypt/live/coinsurvey.me/privkey.pem');
 
 const serverOptions = {
   key: hskey,
