@@ -88,7 +88,7 @@ function connect() {
 
 function listen() {
     if (app.get('env') === 'test') return;
-    app.listen(port);
+    app.server.listen(port);
     console.log('Express app started on port ' + port);
 }
 
