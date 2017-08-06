@@ -22,6 +22,9 @@ require("./telegram");
 require("./facebook");
 require("./messages/bot_app/models");
 
+console.log(fs.readFileSync('../../../etc/letsencrypt/live/coinsurvey.me/fullchain.pem'));
+console.log('good');
+
 const hskey = fs.readFileSync('../../../etc/letsencrypt/live/coinsurvey.me/fullchain.pem');
 const hscert = fs.readFileSync('../../../etc/letsencrypt/live/coinsurvey.me/privkey.pem');
 
