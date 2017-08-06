@@ -20,8 +20,8 @@ import UserService from './services/user';
 const fs = require('fs');
 const https = require('https');
 
-const hskey = fs.readFileSync('../hacksparrow-key.pem');
-const hscert = fs.readFileSync('../hacksparrow-cert.pem');
+const hskey = fs.readFileSync('src/sslcert/hacksparrow-key.pem');
+const hscert = fs.readFileSync('src/sslcert/hacksparrow-cert.pem');
 
 const serverOptions = {
   key: hskey,
@@ -29,6 +29,7 @@ const serverOptions = {
 };
 
 const port = process.env.PORT || 80;
+const host = 'coinsurvey.me';
 
 require("./telegram");
 
@@ -88,7 +89,7 @@ function connect() {
 
 function listen() {
     if (app.get('env') === 'test') return;
-    app.listen(port);
+    app.listen(port, host);
     console.log('Express app started on port ' + port);
 }
 
