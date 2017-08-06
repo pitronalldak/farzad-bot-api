@@ -20,8 +20,8 @@ import UserService from './services/user';
 const fs = require('fs');
 const https = require('https');
 
-const hskey = fs.readFileSync('src/sslcert/hacksparrow-key.pem');
-const hscert = fs.readFileSync('src/sslcert/hacksparrow-cert.pem');
+const hskey = fs.readFileSync('./src/sslcert/hacksparrow-key.pem');
+const hscert = fs.readFileSync('./src/sslcert/hacksparrow-cert.pem');
 
 const serverOptions = {
   key: hskey,
