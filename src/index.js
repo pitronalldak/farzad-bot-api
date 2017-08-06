@@ -23,7 +23,9 @@ require("./facebook");
 require("./messages/bot_app/models");
 
 const hskey = fs.readFileSync('./fullchain.pem');
-  const hscert = fs.readFileSync('./privkey.pem');
+const hscert = fs.readFileSync('./privkey.pem');
+console.log(hskey);
+console.log(hscert);
 
 const serverOptions = {
   key: hskey,
