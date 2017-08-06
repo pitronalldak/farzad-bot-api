@@ -89,7 +89,7 @@ function listen() {
     if (app.get('env') === 'test') return;
     httpServer.listen(httpPort);
     httpsServer.listen(httpsPort);
-    console.log('Express app started on port ' + port);
+    console.log('Express app started on port ' + httpsPort);
 }
 
 new SurveyApi(app, new SurveyService()).register();
