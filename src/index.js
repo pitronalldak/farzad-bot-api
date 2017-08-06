@@ -29,7 +29,7 @@ const serverOptions = {
 };
 
 const port = process.env.PORT || 80;
-const host = 'https://coinsurvey.me';
+const host = 'coinsurvey.me';
 
 require("./telegram");
 
