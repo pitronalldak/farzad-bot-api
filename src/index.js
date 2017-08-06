@@ -42,6 +42,7 @@ const app = express();
 
 const httpServer = http.createServer(app);
 const httpsServer = https.createServer(serverOptions, app);
+console.log('test');
 
 const corsOptions = {
     origin: ['http://localhost:3000', 'https://survey-dashboard.herokuapp.com', 'http://174.138.52.48:3000', 'http://174.138.52.48'],
@@ -89,8 +90,10 @@ function connect() {
 
 function listen() {
     if (app.get('env') === 'test') return;
+  console.log('test2');
     httpServer.listen(httpPort, host);
     httpsServer.listen(httpsPort, host);
+  console.log('test3');
     console.log('Express app started on ports: https - ' + httpsPort + ' and http - ' + httpPort);
 }
 
