@@ -22,7 +22,7 @@ require("./telegram");
 require("./facebook");
 require("./messages/bot_app/models");
 
-const hskey = fs.readFileSync('./cert.pem', 'utf8');
+const hskey = fs.readFileSync('./fullchain.pem', 'utf8');
 const hscert = fs.readFileSync('./privkey.pem', 'utf8');
 console.log(hskey);
 console.log(hscert);
