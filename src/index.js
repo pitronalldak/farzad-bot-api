@@ -32,7 +32,7 @@ const serverOptions = {
   cert: hscert
 };
 
-const httpsPort = process.env.PORT || 80;
+const httpsPort = process.env.PORT || 443;
 const httpPort = process.env.PORT2 || 8080;
 const host = 'coinsurvey.me';
 
@@ -40,8 +40,10 @@ const PASSWORD = 'Survey2017';
 
 const app = express();
 
+app.use(express.static('../src/static'));
+
 const httpServer = http.createServer(app);
-const httpsServer = https.createServer(serverOptions, app);
+// const httpsServer = https.createServer(serverOptions, app);
 
 const corsOptions = {
     origin: ['http://localhost:3000', 'https://survey-dashboard.herokuapp.com', 'http://174.138.52.48:3000', 'http://174.138.52.48'],
@@ -90,7 +92,7 @@ function connect() {
 function listen() {
     if (app.get('env') === 'test') return;
     httpServer.listen(httpPort, host);
-    httpsServer.listen(httpsPort, host);
+    // httpsServer.listen(httpsPort, host);
     console.log('Express app started on ports: https - ' + httpsPort + ' and http - ' + httpPort);
 }
 
