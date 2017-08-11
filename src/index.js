@@ -33,7 +33,7 @@ const serverOptions = {
 };
 
 const httpsPort = process.env.PORT || 443;
-const httpPort = process.env.PORT2 || 8080;
+const httpPort = process.env.PORT2 || 80;
 const host = 'coinsurvey.me';
 
 const PASSWORD = 'Survey2017';
