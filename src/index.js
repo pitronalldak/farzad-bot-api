@@ -22,10 +22,8 @@ require("./telegram");
 require("./facebook");
 require("./messages/bot_app/models");
 
-const hskey = fs.readFileSync('./fullchain.pem', 'utf8');
-const hscert = fs.readFileSync('./privkey.pem', 'utf8');
-console.log(hskey);
-console.log(hscert);
+const hskey = fs.readFileSync('../fullchain.pem', 'utf8');
+const hscert = fs.readFileSync('../privkey.pem', 'utf8');
 
 const serverOptions = {
   key: hskey,
@@ -35,15 +33,16 @@ const serverOptions = {
 const httpsPort = process.env.PORT || 443;
 const httpPort = process.env.PORT2 || 80;
 const host = 'coinsurvey.me';
+// const host = 'localhost';
 
 const PASSWORD = 'Survey2017';
 
 const app = express();
 
-app.use(express.static('../src/static'));
+app.use(express.static('./src/static'));
 
 const httpServer = http.createServer(app);
-// const httpsServer = https.createServer(serverOptions, app);
+const httpsServer = https.createServer(serverOptions, app);
 
 const corsOptions = {
     origin: ['http://localhost:3000', 'https://survey-dashboard.herokuapp.com', 'http://174.138.52.48:3000', 'http://174.138.52.48'],
@@ -92,7 +91,7 @@ function connect() {
 function listen() {
     if (app.get('env') === 'test') return;
     httpServer.listen(httpPort, host);
-    // httpsServer.listen(httpsPort, host);
+    httpsServer.listen(httpsPort, host);
     console.log('Express app started on ports: https - ' + httpsPort + ' and http - ' + httpPort);
 }
 
