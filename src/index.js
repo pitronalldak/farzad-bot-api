@@ -41,9 +41,6 @@ const app = express();
 
 app.use(express.static('./src/static'));
 
-const httpServer = http.createServer(app);
-const httpsServer = https.createServer(serverOptions, app);
-
 const corsOptions = {
     origin: ['http://localhost:3000', 'https://survey-dashboard.herokuapp.com', 'http://174.138.52.48:3000',
       'http://174.138.52.48', 'http://coinsurvey.me:3000'],
@@ -89,6 +86,9 @@ function connect() {
     return mongoose.connect('mongodb://bot:bot@127.0.0.1:27017/bot').connection;
 }
 
+const httpServer = http.createServer(app);
+const httpsServer = https.createServer(serverOptions, app);
+
 function listen() {
     if (app.get('env') === 'test') return;
     httpServer.listen(httpPort, host);
@@ -112,3 +112,4 @@ app.post('/facebook', (req, res) => {
   botFacebook._handleMessage(req.body)
   res.end(JSON.stringify({status: 'ok'}))
 })
+
