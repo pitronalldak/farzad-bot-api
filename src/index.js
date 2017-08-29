@@ -45,7 +45,8 @@ const httpServer = http.createServer(app);
 const httpsServer = https.createServer(serverOptions, app);
 
 const corsOptions = {
-    origin: ['http://localhost:3000', 'https://survey-dashboard.herokuapp.com', 'http://174.138.52.48:3000', 'http://174.138.52.48'],
+    origin: ['http://localhost:3000', 'https://survey-dashboard.herokuapp.com', 'http://174.138.52.48:3000',
+      'http://174.138.52.48', 'https://coinsurvey.me/', 'http://coinsurvey.me/'],
     optionsSuccessStatus: 200,
     methods: 'GET,POST,PUT,DELETE',
     allowedHeaders: ['Content-Type', 'Authorization'],
