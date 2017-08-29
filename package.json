@@ -51,6 +51,7 @@
     "google-auth-library": "^0.10.0",
     "googleapis": "^19.0.0",
     "https": "^1.0.0",
+    "letsencrypt-express": "^2.0.6",
     "memory-cache": "^0.2.0",
     "messenger-bot": "^2.4.0",
     "moment": "^2.18.1",
