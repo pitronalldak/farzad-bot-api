@@ -32,8 +32,8 @@ const serverOptions = {
 
 const httpsPort = process.env.PORT || 443;
 const httpPort = process.env.PORT2 || 80;
-const host = 'coinsurvey.me';
-// const host = 'localhost';
+// const host = 'coinsurvey.me';
+const host = '127.0.0.1';
 
 const PASSWORD = 'Survey2017';
 
