@@ -1,0 +1,116 @@
+Arguments: 
+  /usr/local/bin/node /usr/local/bin/yarn start
+
+PATH: 
+  /Users/pitronalldak/.avn/bin:/Library/Frameworks/Python.framework/Versions/3.6/bin:/Users/pitronalldak/Downloads/google-cloud-sdk/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/Users/pitronalldak/.avn/bin:/Library/Frameworks/Python.framework/Versions/3.6/bin:/Users/pitronalldak/Downloads/google-cloud-sdk/bin:/Users/pitronalldak/Library/Android/sdk/tools:/Users/pitronalldak/Library/Android/sdk/platform-tools:/Users/pitronalldak/golang/bin:/Users/pitronalldak/bin/Sencha/Cmd/6.5.3.6:/Users/pitronalldak/Library/Android/sdk/tools:/Users/pitronalldak/Library/Android/sdk/platform-tools:/Users/pitronalldak/golang/bin:/Users/pitronalldak/bin/Sencha/Cmd/6.5.3.6
+
+Yarn version: 
+  1.5.1
+
+Node version: 
+  8.9.4
+
+Platform: 
+  darwin x64
+
+npm manifest: 
+  {
+    "name": "bot-back",
+    "version": "0.1.0",
+    "description": "bot-back",
+    "main": "dist",
+    "scripts": {
+      "dev": "nodemon -w src --exec \"babel-node src --presets es2015,stage-0 --plugins transform-decorators-legacy\"",
+      "build": "babel src -s -D -d dist --presets es2015,stage-0 --plugins transform-decorators-legacy",
+      "start": "node dist",
+      "start:debug": "DEBUG=express:* node dist",
+      "postinstall": "npm run build",
+      "prestart": "npm run -s build",
+      "test": "eslint src"
+    },
+    "eslintConfig": {
+      "extends": "eslint:recommended",
+      "parserOptions": {
+        "ecmaVersion": 7,
+        "sourceType": "module"
+      },
+      "env": {
+        "node": true
+      },
+      "rules": {
+        "no-console": 0,
+        "no-unused-vars": 1
+      }
+    },
+    "repository": "bot-back",
+    "author": "Petr Ryabinin",
+    "license": "MIT",
+    "dependencies": {
+      "babel-cli": "^6.9.0",
+      "babel-core": "^6.9.0",
+      "babel-plugin-transform-decorators-legacy": "^1.3.4",
+      "babel-plugin-transform-regenerator": "^6.24.1",
+      "babel-preset-es2015": "^6.9.0",
+      "babel-preset-stage-0": "^6.5.0",
+      "bluebird": "^3.5.0",
+      "body-parser": "^1.13.3",
+      "co": "^4.6.0",
+      "compression": "^1.5.2",
+      "cookie-parser": "^1.4.3",
+      "cors": "^2.7.1",
+      "crypto-js": "^3.1.9-1",
+      "eslint": "^3.1.1",
+      "express": "^4.13.3",
+      "express-session": "^1.14.2",
+      "express-validator": "^3.1.2",
+      "fs": "0.0.1-security",
+      "google-auth-library": "^0.10.0",
+      "googleapis": "^19.0.0",
+      "https": "^1.0.0",
+      "memory-cache": "^0.2.0",
+      "messenger-bot": "^2.4.0",
+      "moment": "^2.18.1",
+      "mongoose": "^4.9.8",
+      "node-telegram-bot-api": "^0.27.1",
+      "nodemon": "^1.9.2",
+      "path": "^0.12.7",
+      "pg": "^6.1.2",
+      "pg-promise": "^5.5.2",
+      "readline": "^1.3.0",
+      "reflect-metadata": "^0.1.9",
+      "resource-router-middleware": "^0.5.1",
+      "typeorm": "0.0.6",
+      "uuid": "^3.0.1"
+    },
+    "devDependencies": {
+      "babel-cli": "^6.9.0",
+      "babel-core": "^6.9.0",
+      "babel-plugin-transform-decorators-legacy": "^1.3.4",
+      "babel-preset-es2015": "^6.9.0",
+      "babel-preset-stage-0": "^6.5.0",
+      "eslint": "^3.1.1",
+      "nodemon": "^1.9.2"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
+
+Trace: 
+  Error: Command failed.
+  Exit code: 1
+  Command: sh
+  Arguments: -c node dist
+  Directory: /Users/pitronalldak/Documents/projects/farzad-bot-api
+  Output:
+  
+      at ProcessTermError.MessageError (/usr/local/lib/node_modules/yarn/lib/cli.js:186:110)
+      at new ProcessTermError (/usr/local/lib/node_modules/yarn/lib/cli.js:226:113)
+      at ChildProcess.<anonymous> (/usr/local/lib/node_modules/yarn/lib/cli.js:30281:17)
+      at emitTwo (events.js:126:13)
+      at ChildProcess.emit (events.js:214:7)
+      at maybeClose (internal/child_process.js:925:16)
+      at Process.ChildProcess._handle.onexit (internal/child_process.js:209:5)

@@ -83,7 +83,7 @@ connect()
 function connect() {
     const options = {server: {socketOptions: {keepAlive: 1}}};
     // return mongoose.connect('mongodb://bot:Matwey12@ds145019.mlab.com:45019/heroku_zlrrx207').connection;
-    return mongoose.connect('mongodb://bot:bot@127.0.0.1:27017/bot').connection;
+    return mongoose.connect('mongodb://174.138.52.48:27017/bot').connection;
 }
 
 const httpServer = http.createServer(app);
